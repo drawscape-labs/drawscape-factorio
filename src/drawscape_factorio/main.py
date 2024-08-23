@@ -8,6 +8,7 @@ def main():
     parser = argparse.ArgumentParser(description='Drawscape Factorio CLI toolbelt')
     parser.add_argument('action', choices=['import', 'create'], help='Action to perform')
     parser.add_argument('--json', help='Path to the JSON file for import or create action')
+    parser.add_argument('--optimize', action='store_true', help='Optimize the SVG output')
     args = parser.parse_args()
 
     try:
@@ -18,7 +19,7 @@ def main():
         elif args.action == 'create':
             if not args.json:
                 raise ValueError("--json argument is required for create action")
-            create(args.json)
+            create(args.json, optimize=args.optimize)
     except ValueError as e:
         print(f"Error: {e}")
     except Exception as e:

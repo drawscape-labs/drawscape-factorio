@@ -16,16 +16,19 @@ https://github.com/FUE5BASE/FUE5-Exporter
 
 1) Install the MOD via the Factorio GUI. Search for `FUE5`
 2) Use MOD to "select" area of the map you want to export.
-3) Find the `exported-entities.json` file inside your Factorio App Data (`%APPDATA%/Factorio/script-output`)
+3) Find the `exported-entities.json` file inside your Factorio Application Data
+  - For OS X Steam install (`~/Library/Application Support/factorio/script-output`)
+  - Maybe here as well (`%APPDATA%/Factorio/script-output`)
 4) Copy/Paste they JSON file somewhere else so you can work with it. It will get overwritten if you leave it there. 
 
 
 ## Usage
 
 ```
-drawscape-factorio create --json {filepath} --theme default
+drawscape-factorio create --json exported-entities.json --optimize
 ```
 
+- `--optimize` will run vpype commands to prepare for efficient pen plotting
 
 ## Notes
 - I've only tested this on a Mac (OSX)
