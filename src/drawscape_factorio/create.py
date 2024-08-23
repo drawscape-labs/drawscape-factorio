@@ -1,9 +1,10 @@
 import json
 import svgwrite
+from drawscape_factorio.import_json import parseJSON
 
 def create(json_file_path):
-    with open(json_file_path, 'r') as file:
-        data = json.load(file)
+    # Use parseJSON function to load and process the JSON file
+    data = parseJSON(json_file_path)
     
     # Create an SVG drawing object
     output_svg = 'output.svg'
@@ -12,7 +13,7 @@ def create(json_file_path):
     # Create a main group for all entities
     main_group = dwg.g(id='entities', transform='scale(6)')
     
-    # Create groups for each category
+    # Create groups for each category (Color of Pens)
     belt_group = dwg.g(id='belts')
     rail_group = dwg.g(id='rails')
     wall_group = dwg.g(id='walls')
@@ -63,7 +64,6 @@ def create(json_file_path):
     
     # Save the SVG file
     dwg.save()
-
 
 
 def create_asset(dwg, entity, color = 'blue'):
