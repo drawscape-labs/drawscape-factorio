@@ -6,53 +6,88 @@ class DefaultTheme:
     WEST = 6
 
     # Constant for stroke width
-    STROKE_WIDTH = 0.15
+    STROKE_WIDTH = 0.4  # unsure if this really translates to millimetes, AI saying it's releative to the view box. 
 
-    def __init__(self):
+    def __init__(self, resolution='HIGH'):
+        self.resolution = resolution
+        self.default_color = '#0000FF' # Blue
         self.belt_color = '#008000' # Green
         self.splitter_color = '#008000' # Green
         self.wall_color = '#FF0000' # Red
         self.asset_color = '#0000FF'  # Blue
 
-    def build_belt(self, dwg, entity):
-        x = entity['x'] - entity['width'] / 2
-        y = entity['y'] - entity['height'] / 2
+    def render_default(self, dwg, entity, color=None):
+        
+        # This method renders a default entity as a filled in square
+        # Inputs:
+        #   dwg: The SVG drawing object
+        #   entity: A dictionary containing entity properties including:
+        #   color: Optional color parameter, defaults to self.default_color if not provided
+
+        if color is None: 
+            color = self.default_color
+
+        # Calculate top-left corner from center point
+        top_left_x = entity['x'] - entity['width'] / 2
+        top_left_y = entity['y'] - entity['height'] / 2
         width = entity['width']
         height = entity['height']
-        
+
         group = dwg.g()
         
-        if 'direction' in entity:
-            direction = entity['direction']
+        # Draw the rectangle
+        stroke_offset = self.STROKE_WIDTH / 2
+        group.add(dwg.rect(
+            insert=(top_left_x + stroke_offset, top_left_y + stroke_offset),
+            size=(width - self.STROKE_WIDTH, height - self.STROKE_WIDTH),
+            fill='none',
+            stroke=color,
+            stroke_width=self.STROKE_WIDTH
+        ))
+        
+        # If height is greater than or equal to 1, draw an X in the middle
+        if height > 1 or width > 1:
+            center_x = entity['x']
+            center_y = entity['y']
+            half_width = width / 2 - self.STROKE_WIDTH / 2
+            half_height = height / 2 - self.STROKE_WIDTH / 2
             
-            if direction == self.NORTH or direction == self.SOUTH:  # North or South (vertical)
-                start_left = (x + width * 0.25, y)
-                end_left = (x + width * 0.25, y + height)
-                start_right = (x + width * 0.75, y)
-                end_right = (x + width * 0.75, y + height)
-                
-                group.add(dwg.line(start=start_left, end=end_left, stroke=self.belt_color, stroke_width=self.STROKE_WIDTH))
-                group.add(dwg.line(start=start_right, end=end_right, stroke=self.belt_color, stroke_width=self.STROKE_WIDTH))
+            # Draw the X
+            group.add(dwg.line(start=(center_x - half_width, center_y - half_height), 
+                               end=(center_x + half_width, center_y + half_height), 
+                               stroke=color, stroke_width=self.STROKE_WIDTH))
+            group.add(dwg.line(start=(center_x - half_width, center_y + half_height), 
+                               end=(center_x + half_width, center_y - half_height), 
+                               stroke=color, stroke_width=self.STROKE_WIDTH))
             
-            elif direction == self.EAST or direction == self.WEST:  # East or West (horizontal)
-                start_top = (x, y + height * 0.25)
-                end_top = (x + width, y + height * 0.25)
-                start_bottom = (x, y + height * 0.75)
-                end_bottom = (x + width, y + height * 0.75)
+        if height > 2 or width > 2:
+            # Draw a cross that touches all sides of the rectangle
+            center_x = entity['x']
+            center_y = entity['y']
+            half_width = width / 2 - self.STROKE_WIDTH / 2
+            half_height = height / 2 - self.STROKE_WIDTH / 2
 
-                group.add(dwg.line(start=start_top, end=end_top, stroke=self.belt_color, stroke_width=self.STROKE_WIDTH))
-                group.add(dwg.line(start=start_bottom, end=end_bottom, stroke=self.belt_color, stroke_width=self.STROKE_WIDTH))
+            # Vertical line of the cross
+            group.add(dwg.line(start=(center_x, center_y - half_height),
+                               end=(center_x, center_y + half_height),
+                               stroke=color, stroke_width=self.STROKE_WIDTH))
+
+            # Horizontal line of the cross
+            group.add(dwg.line(start=(center_x - half_width, center_y),
+                               end=(center_x + half_width, center_y),
+                               stroke=color, stroke_width=self.STROKE_WIDTH))
         
         return group
 
-    def build_wall(self, dwg, entity):
-        x = entity['x'] - entity['width'] / 2
-        y = entity['y'] - entity['height'] / 2
-        width = entity['width']
-        height = entity['height']
-        return dwg.rect(insert=(x, y), size=(width, height), fill='none', stroke=self.wall_color, stroke_width=self.STROKE_WIDTH * 2)
+    def render_asset(self, dwg, entity):
+        group = self.render_default(dwg, entity, color=self.asset_color)        
+        return group
+    
+    def render_wall(self, dwg, entity):
+        group = self.render_default(dwg, entity, color=self.wall_color)        
+        return group
 
-    def build_splitter(self, dwg, entity):
+    def render_splitter(self, dwg, entity):
         direction = entity.get('direction', self.NORTH)
         
         if direction == self.EAST:
@@ -81,18 +116,27 @@ class DefaultTheme:
         
         return group
 
-    def build_asset(self, dwg, entity):
+    def render_belt(self, dwg, entity):
         x = entity['x'] - entity['width'] / 2
         y = entity['y'] - entity['height'] / 2
         width = entity['width']
         height = entity['height']
         
         group = dwg.g()
-        group.add(dwg.rect(insert=(x, y), size=(width, height), fill='none', stroke=self.asset_color, stroke_width=self.STROKE_WIDTH * 2))
         
-        # Add X in the middle of the rect if asset is larger than 1x1
-        if width > 1 and height > 1:
-            group.add(dwg.line(start=(x, y), end=(x + width, y + height), stroke=self.asset_color, stroke_width=self.STROKE_WIDTH * 2))
-            group.add(dwg.line(start=(x, y + height), end=(x + width, y), stroke=self.asset_color, stroke_width=self.STROKE_WIDTH * 2))
+        if 'direction' in entity:
+            direction = entity['direction']
+            
+            if direction == self.NORTH or direction == self.SOUTH:  # North or South (vertical)
+                start = (x + width * 0.5, y)
+                end = (x + width * 0.5, y + height)
+                
+                group.add(dwg.line(start=start, end=end, stroke=self.belt_color, stroke_width=self.STROKE_WIDTH))
+            
+            elif direction == self.EAST or direction == self.WEST:  # East or West (horizontal)
+                start = (x, y + height * 0.5)
+                end = (x + width, y + height * 0.5)
+
+                group.add(dwg.line(start=start, end=end, stroke=self.belt_color, stroke_width=self.STROKE_WIDTH))
         
         return group

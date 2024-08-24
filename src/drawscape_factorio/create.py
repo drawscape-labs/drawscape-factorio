@@ -1,24 +1,46 @@
 import svgwrite
 import os
 from drawscape_factorio.import_json import parseJSON
+from drawscape_factorio.themes.circles_theme import CirclesTheme
 from drawscape_factorio.themes.default_theme import DefaultTheme
 from drawscape_factorio.optimize_svg import optimize_svg
 
-# Constants for filenames
-DEFAULT_OUTPUT_SVG = 'output.svg'
 
-def create(json_file_path, optimize=False):
+# The create function is responsible for generating an SVG drawing of a Factorio blueprint
+# based on the provided JSON file. It handles the following tasks:
+#   1. Parsing the JSON file to extract entity data (Coming from Factorio MOD export)
+#   2. Determining the appropriate theme (default or circles)
+#   3. Calculating the bounds and scale of the drawing
+#   4. Creating an SVG drawing object with the correct dimensions and viewBox
+#   5. Drawing each entity using the selected theme
+#   6. Optionally optimizing the SVG output
+#   7. Saving the final SVG file
+#
+# Parameters:
+#   json_file_path (str): Path to the JSON file containing the Factorio blueprint data
+#   optimize (bool): Whether to optimize the SVG output (default: False)
+#   template (str): The theme to use for drawing entities (default: 'default')
+#   output_file_name (str): Name of the output SVG file (default: 'output.svg')
+#
+# Returns:
+#   str: Path to the created (and optionally optimized) SVG file
+
+
+def create(json_file_path, optimize=False, template='default', output_file_name='output.svg'):
     
-    # Initialize the default theme
-    theme = DefaultTheme()
+    # Initialize the theme based on the template parameter
+    if template == 'circles':
+        theme = CirclesTheme()
+    else:  # default theme
+        theme = DefaultTheme()
 
     # Use parseJSON function to load and process the JSON file
     data = parseJSON(json_file_path)
     
-    # Get the bounds of all entities
+    # Get the bounds of all entities in the map
     bounds = get_entity_bounds(data)
     
-    # Define A4 paper size in mm with 10mm padding
+    # Define A4 (portrait) paper size in mm with 10mm padding
     svg_width_mm = 210
     svg_height_mm = 297
     padding_mm = 10
@@ -45,27 +67,27 @@ def create(json_file_path, optimize=False):
     
     # Create the SVG drawing object with forced A4 size and centered content
     dwg = svgwrite.Drawing(
-        filename=DEFAULT_OUTPUT_SVG,
+        filename=output_file_name,
         profile='full',
         size=(f'{svg_width_mm}mm', f'{svg_height_mm}mm'),
         viewBox=f"{viewbox_x} {viewbox_y} {viewbox_width} {viewbox_height}"
     )
         
-    # Define entity types and their corresponding build methods
+    # Define entity types and their corresponding render methods
     entity_types = {
-        'belts': theme.build_belt,
-        'walls': theme.build_wall,
-        'splitters': theme.build_splitter,
-        'asset': theme.build_asset,
-        # 'rails': theme.build_rail,  # TODO: Uncomment when rail building is implemented
+        'belts': theme.render_belt,
+        'walls': theme.render_wall,
+        'splitters': theme.render_splitter,
+        'asset': theme.render_asset,
+        # 'rails': theme.render_rail,  # TODO: Uncomment when rail rendering is implemented
     }
 
     # Create and populate groups for each entity type
-    for entity_type, build_method in entity_types.items():
+    for entity_type, render_method in entity_types.items():
         group = dwg.g(id=entity_type)
         entities = data.get(entity_type, [])
         for entity in entities:
-            group.add(build_method(dwg, entity))
+            group.add(render_method(dwg, entity))
         if entities:  # Check if there are any entities for this type
             dwg.add(group)
 
@@ -74,22 +96,23 @@ def create(json_file_path, optimize=False):
 
     # Print information about the SVG drawing
     print(f"Created SVG drawing:")
-    print(f"  Output file: {DEFAULT_OUTPUT_SVG}")
+    print(f"  Output file: {output_file_name}")
     print(f"  Size: {svg_width_mm}mm x {svg_height_mm}mm (A4)")
     print(f"  ViewBox: {viewbox_x} {viewbox_y} {viewbox_width} {viewbox_height}")
+    print(f"  Template: {template}")
 
     if optimize:
         # Optimize the SVG file
-        optimized_svg = optimize_svg(DEFAULT_OUTPUT_SVG)
+        optimized_svg = optimize_svg(output_file_name)
         
         if optimized_svg:
             # Remove the original unoptimized SVG file
-            os.remove(DEFAULT_OUTPUT_SVG)
-            print(f"Original SVG file {DEFAULT_OUTPUT_SVG} has been deleted.")
+            os.remove(output_file_name)
+            print(f"Original SVG file {output_file_name} has been deleted.")
         else:
             print("SVG optimization failed. Original file retained.")
     else:
-        print(f"SVG file saved as {DEFAULT_OUTPUT_SVG}")
+        print(f"SVG file saved as {output_file_name}")
 
 
 # Function to calculate the bounds of all entities in the data
