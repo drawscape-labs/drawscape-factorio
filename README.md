@@ -1,6 +1,11 @@
 # Pen Plotting a Factorio Bases Design
 CLI written in Python to create SVG images from Factorio base data that you can then draw on a pen plotter.
 
+# Demo
+In case you are wondering what it means to pen plot something, checkout this video: 
+
+[Pen Plotting Video Demo](https://www.youtube.com/shorts/DEY43r4u00o)
+
 ## Installation
 
 Clone this repository and then run:
