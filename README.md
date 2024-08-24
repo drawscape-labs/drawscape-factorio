@@ -1,16 +1,16 @@
 # Factorio CLI
-Python CLI library to create Pen Plotter SVG files from Factorio data
+CLI written in Python to create SVG images from Factorio base data that you can then draw on a pen plotter.
 
 ## Installation
 
-To install Drawscape Fractorio CLI, clone this repository and run:
+Clone this repository and then run:
 
 ```
 pip3 install -e .
 ```
 
-## Exporting Map Data
-Currently using a Factorio MOD to export the JSON data of all entites on the map. 
+## Exporting Map Data out of Factorio
+Currently using a Factorio MOD called `FUE5-Exporter` to export all entites on a map in JSON format. 
 
 https://github.com/FUE5BASE/FUE5-Exporter
 
@@ -22,14 +22,20 @@ https://github.com/FUE5BASE/FUE5-Exporter
 4) Copy/Paste they JSON file somewhere else so you can work with it. It will get overwritten if you leave it there. 
 
 
+## Themes
+Goal is that more themes can be implimented that will unique render each of the Entity Types. Most likely each theme will be dedicated to a specific pen type and paper size. 
+
 ## Usage
 
 ```
-drawscape-factorio create --json exported-entities.json --optimize
+drawscape-factorio create --json exported-entities.json
 ```
 
-- `--optimize` will run vpype commands to prepare for efficient pen plotting
+- `--optimize` will run `vpype` commands to prepare the SVG for efficient pen plotting
 
 ## Notes
 - I've only tested this on a Mac (OSX)
+- For some reason the FUE5-Exporter mod isn't exporting roads. 
 
+## TODO
+- Implement Rendering for the Rail Systems. 
