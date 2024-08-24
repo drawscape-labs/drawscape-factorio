@@ -1,10 +1,8 @@
-# Pen Plotting a Factorio Bases Design
+# Drawing a Factorio Base with a Pen Plotter
 CLI written in Python to create SVG images from Factorio base data that you can then draw on a pen plotter.
 
-# Demo
-In case you are wondering what it means to pen plot something, checkout this video: 
-
-[Pen Plotting Video Demo](https://www.youtube.com/shorts/DEY43r4u00o)
+## Demo
+In case you are wondering what pen plotting is, checkout this video: [Pen Plotting Video Demo](https://www.youtube.com/shorts/DEY43r4u00o)
 
 ## Installation
 
@@ -26,10 +24,6 @@ https://github.com/FUE5BASE/FUE5-Exporter
   - Maybe here as well (`%APPDATA%/Factorio/script-output`)
 4) Copy/Paste they JSON file somewhere else so you can work with it. It will get overwritten if you leave it there. 
 
-
-## Themes
-Goal being more themes can be implimented that will uniquely render each of the Entity Types. Most likely each theme will be dedicated to a specific pen type and paper size. 
-
 ## Usage
 
 ```
@@ -37,6 +31,9 @@ drawscape-factorio create --json exported-entities.json
 ```
 
 - `--optimize` will run `vpype` commands to prepare the SVG for efficient pen plotting. This will not work unless you already have `vpype` installed via the command line. https://github.com/abey79/vpype
+
+## Themes
+Goal being more themes can be implimented that will uniquely render each of the Entity Types. Most likely each theme will be dedicated to a specific pen type and paper size. 
 
 ## Notes
 - I've only tested this on a Mac (OSX)
