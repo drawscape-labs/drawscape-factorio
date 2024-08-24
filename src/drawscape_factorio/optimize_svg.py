@@ -1,6 +1,15 @@
 import os
 import subprocess
 
+# This function uses the vpype library to optimize the SVG for drawing on a pen plotter.
+# vpype is a powerful tool for processing vector graphics, particularly for pen plotting.
+# The optimization process includes:
+#   - reloop: optimizes the drawing order of paths
+#   - linemerge: combines consecutive lines and curves
+#   - linesort: sorts lines to minimize pen travel
+#   - linesimplify: simplifies paths by removing unnecessary points
+# These operations help to reduce drawing time and improve the quality of the plot.
+
 def optimize_svg(input_svg_path):
     print(f"Optimizing SVG file: {input_svg_path}")
 

@@ -9,6 +9,9 @@ DEFAULT_OUTPUT_SVG = 'output.svg'
 
 def create(json_file_path, optimize=False):
     
+    # Initialize the default theme
+    theme = DefaultTheme()
+
     # Use parseJSON function to load and process the JSON file
     data = parseJSON(json_file_path)
     
@@ -48,9 +51,6 @@ def create(json_file_path, optimize=False):
         viewBox=f"{viewbox_x} {viewbox_y} {viewbox_width} {viewbox_height}"
     )
         
-    # Initialize the default theme
-    theme = DefaultTheme()
-
     # Define entity types and their corresponding build methods
     entity_types = {
         'belts': theme.build_belt,
