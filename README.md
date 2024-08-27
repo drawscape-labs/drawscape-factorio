@@ -1,3 +1,6 @@
+![image](https://github.com/user-attachments/assets/864cb82c-6635-427b-becb-f5e34a0d75ef)
+
+
 # Drawing a Factorio Base with a Pen Plotter
 CLI written in Python to create SVG images from Factorio base data that you can then draw on a pen plotter.
 
