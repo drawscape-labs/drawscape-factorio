@@ -48,11 +48,11 @@ Goal being more themes can be implimented that will uniquely render each of the 
 ## Examples
 <table>
   <tr>
-    <td><a href="https://github.com/user-attachments/assets/dc106066-e577-492f-ab55-cf9106614c2b" target="_blank"><img src="https://github.com/user-attachments/assets/dc106066-e577-492f-ab55-cf9106614c2b" alt="IMG_6576" width="50%"></a></td>
-    <td><a href="https://github.com/user-attachments/assets/531cc4e8-3f67-429a-ab2d-f6c93de927ec" target="_blank"><img src="https://github.com/user-attachments/assets/531cc4e8-3f67-429a-ab2d-f6c93de927ec" alt="IMG_6588" width="50%"></a></td>
+    <td><a href="https://github.com/user-attachments/assets/dc106066-e577-492f-ab55-cf9106614c2b" target="_blank"><img src="https://github.com/user-attachments/assets/dc106066-e577-492f-ab55-cf9106614c2b" alt="IMG_6576" ></a></td>
+    <td><a href="https://github.com/user-attachments/assets/531cc4e8-3f67-429a-ab2d-f6c93de927ec" target="_blank"><img src="https://github.com/user-attachments/assets/531cc4e8-3f67-429a-ab2d-f6c93de927ec" alt="IMG_6588" ></a></td>
   </tr>
   <tr>
-    <td><a href="https://github.com/user-attachments/assets/36f47d8d-ff88-45b0-9943-ecaa87a545a5" target="_blank"><img src="https://github.com/user-attachments/assets/36f47d8d-ff88-45b0-9943-ecaa87a545a5" alt="IMG_6620" width="50%"></a></td>
-    <td><a href="https://github.com/user-attachments/assets/f2324abc-e2d2-4873-a882-350a80342469" target="_blank"><img src="https://github.com/user-attachments/assets/f2324abc-e2d2-4873-a882-350a80342469" alt="IMG_6635" width="50%"></a></td>
+    <td><a href="https://github.com/user-attachments/assets/36f47d8d-ff88-45b0-9943-ecaa87a545a5" target="_blank"><img src="https://github.com/user-attachments/assets/36f47d8d-ff88-45b0-9943-ecaa87a545a5" alt="IMG_6620" ></a></td>
+    <td><a href="https://github.com/user-attachments/assets/f2324abc-e2d2-4873-a882-350a80342469" target="_blank"><img src="https://github.com/user-attachments/assets/f2324abc-e2d2-4873-a882-350a80342469" alt="IMG_6635" ></a></td>
   </tr>
 </table>
