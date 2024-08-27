@@ -61,7 +61,7 @@ Goal being more themes can be implimented that will uniquely render each of the 
   </tr>
   <tr>
     <td><a href="https://github.com/user-attachments/assets/c6d03728-bf6f-4136-8b73-c5dd40bbfd58" target="_blank">
-      <img src="[https://github.com/user-attachments/assets/f2324abc-e2d2-4873-a882-350a80342469](https://github.com/user-attachments/assets/c6d03728-bf6f-4136-8b73-c5dd40bbfd58)" alt="IMG_6635" ></a>
+      <img src="https://github.com/user-attachments/assets/c6d03728-bf6f-4136-8b73-c5dd40bbfd58" alt="IMG_6635" ></a>
     </td>
   </tr>
 </table>
