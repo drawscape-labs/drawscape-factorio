@@ -21,12 +21,14 @@ from drawscape_factorio.optimize_svg import optimize_svg
 #   optimize (bool): Whether to optimize the SVG output (default: False)
 #   template (str): The theme to use for drawing entities (default: 'default')
 #   output_file_name (str): Name of the output SVG file (default: 'output.svg')
+#   landscape (bool): Whether to render the SVG in landscape mode (default: False)
+#   size (str): The paper size to use (default: None)
 #
 # Returns:
 #   str: Path to the created (and optionally optimized) SVG file
 
 
-def create(json_file_path, optimize=False, template='default', output_file_name='output.svg'):
+def create(json_file_path, optimize=False, template='default', output_file_name='output.svg', landscape=False, size=None):
     
     # Initialize the theme based on the template parameter
     if template == 'circles':
@@ -37,27 +39,27 @@ def create(json_file_path, optimize=False, template='default', output_file_name=
     # Use parseJSON function to load and process the JSON file
     data = parseJSON(json_file_path)
     
-    # Calculate canvas size and viewBox
-    svg_width_mm, svg_height_mm, viewbox_x, viewbox_y, viewbox_width, viewbox_height = calculate_canvas_and_viewbox(data, 'landscape')
+    # Calculate canvas size and viewBox, passing the landscape and size parameters
+    svg_width_mm, svg_height_mm, viewbox_x, viewbox_y, viewbox_width, viewbox_height = calculate_canvas_and_viewbox(data, 'landscape' if landscape else 'portrait', size)
     
-    # Create the SVG drawing object with forced A4 size and centered content
+    # Create the SVG drawing object with size based on the 'size' parameter
     dwg = svgwrite.Drawing(
         filename=output_file_name,
         profile='full',
-        size=(f'{svg_width_mm}mm', f'{svg_height_mm}mm'),
+        size=(f'{svg_width_mm}mm', f'{svg_height_mm}mm') if size else ('100%', '100%'),
         viewBox=f"{viewbox_x} {viewbox_y} {viewbox_width} {viewbox_height}"
     )
 
     # Add the grid to the drawing
-    create_grid(dwg, viewbox_x, viewbox_y, viewbox_width, viewbox_height)
+    # create_grid(dwg, viewbox_x, viewbox_y, viewbox_width, viewbox_height)
 
     # Define entity types and that will be rendered
     entity_types = {
         'belts': theme.render_belt,
-        'walls': theme.render_wall,
-        'splitters': theme.render_splitter,
+        # 'walls': theme.render_wall,
+        # 'splitters': theme.render_splitter,
         'asset': theme.render_asset,
-        'spaceship': theme.render_spaceship,
+        # 'spaceship': theme.render_spaceship,
         'rails': theme.render_rail,
         # 'electrical': theme.render_electrical
 
@@ -78,10 +80,24 @@ def create(json_file_path, optimize=False, template='default', output_file_name=
     # Print information about the SVG drawing
     print(f"Created SVG drawing:")
     print(f"  Output file: {output_file_name}")
-    print(f"  Size: {svg_width_mm}mm x {svg_height_mm}mm (A4)")
+    if size:
+        print(f"  Size: {svg_width_mm}mm x {svg_height_mm}mm ({size})")
+    else:
+        print(f"  Size: 100% x 100% (optimized for screen)")
     print(f"  ViewBox: {viewbox_x} {viewbox_y} {viewbox_width} {viewbox_height}")
     print(f"  Template: {template}")
     print(f"  Theme resolution: {theme.resolution}")
+    print(f"  Orientation: {'Landscape' if landscape else 'Portrait'}")
+    
+    # Print bounding box information
+    bounds = get_entity_bounds(data)
+    print(f"  Bounding Box:")
+    print(f"    Min X: {bounds['min_x']:.2f}")
+    print(f"    Max X: {bounds['max_x']:.2f}")
+    print(f"    Min Y: {bounds['min_y']:.2f}")
+    print(f"    Max Y: {bounds['max_y']:.2f}")
+    print(f"    Width: {bounds['max_x'] - bounds['min_x']:.2f}")
+    print(f"    Height: {bounds['max_y'] - bounds['min_y']:.2f}")
 
     if optimize:
         # Optimize the SVG file
@@ -97,17 +113,27 @@ def create(json_file_path, optimize=False, template='default', output_file_name=
         print(f"SVG file saved as {output_file_name}")
 
 
-def calculate_canvas_and_viewbox(data, orientation='portrait'):
+def calculate_canvas_and_viewbox(data, orientation='portrait', size=None):
     
-    # Define A4 paper size in mm with 10mm padding
-    if orientation == 'landscape':
-        svg_width_mm = 297
-        svg_height_mm = 210
-    else:  # default to portrait
-        svg_width_mm = 210
-        svg_height_mm = 297
+    # Define paper sizes in mm with 10mm padding
+    paper_sizes = {
+        'A4': (210, 297),
+        'A3': (297, 420),
+        'A2': (420, 594),
+        'A1': (594, 841),
+        'A0': (841, 1189),
+        'LETTER': (215.9, 279.4)  # 8.5 x 11 inches in mm
+    }
     
-    padding_mm = 10
+    if size and size.upper() in paper_sizes:
+        svg_width_mm, svg_height_mm = paper_sizes[size.upper()]
+        if orientation == 'landscape':
+            svg_width_mm, svg_height_mm = svg_height_mm, svg_width_mm
+    else:
+        # Default to screen-optimized size
+        svg_width_mm, svg_height_mm = 100, 100  # These will be treated as percentages
+    
+    padding_mm = 10 if size else 0
     content_width_mm = svg_width_mm - 2 * padding_mm
     content_height_mm = svg_height_mm - 2 * padding_mm
     
@@ -123,11 +149,11 @@ def calculate_canvas_and_viewbox(data, orientation='portrait'):
     scaled_width = width * scale
     scaled_height = height * scale
     
-    # Calculate offsets to center the drawing horizontally and vertically with padding
+    # Calculate offsets to center the drawing
     x_offset = (svg_width_mm - scaled_width) / 2
     y_offset = (svg_height_mm - scaled_height) / 2
 
-    # Calculate the viewBox parameters to center the content both horizontally and vertically
+    # Calculate the viewBox parameters
     viewbox_width = svg_width_mm / scale
     viewbox_height = svg_height_mm / scale
     viewbox_x = bounds['min_x'] - (x_offset - padding_mm) / scale

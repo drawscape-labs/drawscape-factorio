@@ -9,10 +9,10 @@ class DefaultTheme:
     WEST = 6
 
     # Constant for stroke width
-    STROKE_WIDTH = 0.4  # unsure if this really translates to millimetes, doubtful
+    STROKE_WIDTH = 0.3  # unsure if this really translates to millimetes, doubtful
 
     def __init__(self, resolution='HIGH'):
-        self.resolution = resolution
+        self.resolution = resolution.upper()
         self.default_color = '#0000FF' # Blue
         self.belt_color = '#008000' # Green
         self.splitter_color = '#008000' # Green
@@ -34,15 +34,23 @@ class DefaultTheme:
     # Low resultion rendering for really large maps
     def render_default_low(self, dwg, entity, color=None):
 
-        top_left_x = entity['x'] - entity['width'] / 2
-        top_left_y = entity['y'] - entity['height'] / 2
-        width = entity['width']
-        height = entity['height']
+        if entity.get('direction') in [self.EAST, self.WEST]:
+            # Rotate 90 degrees for east or west direction
+            top_left_x = entity['x'] - entity['height'] / 2
+            top_left_y = entity['y'] - entity['width'] / 2
+            width = entity['height']
+            height = entity['width']
+        else:
+            # Default orientation for north, south, or no direction
+            top_left_x = entity['x'] - entity['width'] / 2
+            top_left_y = entity['y'] - entity['height'] / 2
+            width = entity['width']
+            height = entity['height']
 
         group = dwg.g()
         
         # draw containing rectangle
-        if width >= 1:
+        if width >= 2 or height >= 2:
             stroke_offset = self.STROKE_WIDTH / 2
             group.add(dwg.rect(
                 insert=(top_left_x + stroke_offset, top_left_y + stroke_offset),
@@ -51,36 +59,22 @@ class DefaultTheme:
                 stroke=color,
                 stroke_width=self.STROKE_WIDTH
             ))
-        
-        if height > 3 or width > 3:
-            center_x = entity['x']
-            center_y = entity['y']
-            
-            # Draw inner rectangle
-            inner_width = width * 0.6
-            inner_height = height * 0.6
-            inner_x = center_x - inner_width / 2
-            inner_y = center_y - inner_height / 2
-            group.add(dwg.rect(insert=(inner_x, inner_y),
-                               size=(inner_width, inner_height),
-                               fill='none',
-                               stroke=color,
-                               stroke_width=self.STROKE_WIDTH))
 
-        if height > 6 or width > 6:
-            center_x = entity['x']
-            center_y = entity['y']
+        # if height > 4 or width > 4:
+        #     center_x = entity['x']
+        #     center_y = entity['y']
             
-            # Draw 3rd inner rectangle
-            inner_width = width * 0.3
-            inner_height = height * 0.3
-            inner_x = center_x - inner_width / 2
-            inner_y = center_y - inner_height / 2
-            group.add(dwg.rect(insert=(inner_x, inner_y),
-                               size=(inner_width, inner_height),
-                               fill='none',
-                               stroke=color,
-                               stroke_width=self.STROKE_WIDTH))
+        #     # Draw an X in the middle
+        #     half_width = width * 0.25  # Increased from 0.15 to make X larger
+        #     half_height = height * 0.25  # Increased from 0.15 to make X larger
+        #     group.add(dwg.line(start=(center_x - half_width, center_y - half_height),
+        #                        end=(center_x + half_width, center_y + half_height),
+        #                        stroke=color,
+        #                        stroke_width=self.STROKE_WIDTH))
+        #     group.add(dwg.line(start=(center_x - half_width, center_y + half_height),
+        #                        end=(center_x + half_width, center_y - half_height),
+        #                        stroke=color,
+        #                        stroke_width=self.STROKE_WIDTH))
             
         return group
     
