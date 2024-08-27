@@ -47,7 +47,9 @@ Goal being more themes can be implimented that will uniquely render each of the 
 
 ## Examples
 
+<p style="width=50%">
 ![IMG_6576](https://github.com/user-attachments/assets/dc106066-e577-492f-ab55-cf9106614c2b)
+  </p>
 ![IMG_6588](https://github.com/user-attachments/assets/531cc4e8-3f67-429a-ab2d-f6c93de927ec)
 ![IMG_6620](https://github.com/user-attachments/assets/36f47d8d-ff88-45b0-9943-ecaa87a545a5)
 ![IMG_6635](https://github.com/user-attachments/assets/f2324abc-e2d2-4873-a882-350a80342469)
