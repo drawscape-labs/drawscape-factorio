@@ -1,3 +1,6 @@
+import numpy as np
+import math
+
 class DefaultTheme:
     # Constants for directions
     NORTH = 0
@@ -6,7 +9,7 @@ class DefaultTheme:
     WEST = 6
 
     # Constant for stroke width
-    STROKE_WIDTH = 0.4  # unsure if this really translates to millimetes, AI saying it's releative to the view box. 
+    STROKE_WIDTH = 0.4  # unsure if this really translates to millimetes, doubtful
 
     def __init__(self, resolution='HIGH'):
         self.resolution = resolution
@@ -15,19 +18,22 @@ class DefaultTheme:
         self.splitter_color = '#008000' # Green
         self.wall_color = '#FF0000' # Red
         self.asset_color = '#0000FF'  # Blue
+        self.spaceship_color = '#FFD700' # Gold
+        self.rail_color = '#808080'  # Gray
 
     def render_default(self, dwg, entity, color=None):
-        
-        # This method renders a default entity as a filled in square
-        # Inputs:
-        #   dwg: The SVG drawing object
-        #   entity: A dictionary containing entity properties including:
-        #   color: Optional color parameter, defaults to self.default_color if not provided
 
         if color is None: 
             color = self.default_color
 
-        # Calculate top-left corner from center point
+        if self.resolution == 'LOW':
+            return self.render_default_low(dwg, entity, color)
+        else:
+            return self.render_default_high(dwg, entity, color)
+
+    # Low resultion rendering for really large maps
+    def render_default_low(self, dwg, entity, color=None):
+
         top_left_x = entity['x'] - entity['width'] / 2
         top_left_y = entity['y'] - entity['height'] / 2
         width = entity['width']
@@ -35,7 +41,60 @@ class DefaultTheme:
 
         group = dwg.g()
         
-        # Draw the rectangle
+        # draw containing rectangle
+        if width >= 1:
+            stroke_offset = self.STROKE_WIDTH / 2
+            group.add(dwg.rect(
+                insert=(top_left_x + stroke_offset, top_left_y + stroke_offset),
+                size=(width - self.STROKE_WIDTH, height - self.STROKE_WIDTH),
+                fill='none',
+                stroke=color,
+                stroke_width=self.STROKE_WIDTH
+            ))
+        
+        if height > 3 or width > 3:
+            center_x = entity['x']
+            center_y = entity['y']
+            
+            # Draw inner rectangle
+            inner_width = width * 0.6
+            inner_height = height * 0.6
+            inner_x = center_x - inner_width / 2
+            inner_y = center_y - inner_height / 2
+            group.add(dwg.rect(insert=(inner_x, inner_y),
+                               size=(inner_width, inner_height),
+                               fill='none',
+                               stroke=color,
+                               stroke_width=self.STROKE_WIDTH))
+
+        if height > 6 or width > 6:
+            center_x = entity['x']
+            center_y = entity['y']
+            
+            # Draw 3rd inner rectangle
+            inner_width = width * 0.3
+            inner_height = height * 0.3
+            inner_x = center_x - inner_width / 2
+            inner_y = center_y - inner_height / 2
+            group.add(dwg.rect(insert=(inner_x, inner_y),
+                               size=(inner_width, inner_height),
+                               fill='none',
+                               stroke=color,
+                               stroke_width=self.STROKE_WIDTH))
+            
+        return group
+    
+    def render_default_high(self, dwg, entity, color=None):
+        if color is None: 
+            color = self.default_color
+
+        top_left_x = entity['x'] - entity['width'] / 2
+        top_left_y = entity['y'] - entity['height'] / 2
+        width = entity['width']
+        height = entity['height']
+
+        group = dwg.g()
+        
         stroke_offset = self.STROKE_WIDTH / 2
         group.add(dwg.rect(
             insert=(top_left_x + stroke_offset, top_left_y + stroke_offset),
@@ -45,39 +104,150 @@ class DefaultTheme:
             stroke_width=self.STROKE_WIDTH
         ))
         
-        # If height is greater than or equal to 1, draw an X in the middle
-        if height > 1 or width > 1:
+        if height > 2 or width > 2:
             center_x = entity['x']
             center_y = entity['y']
             half_width = width / 2 - self.STROKE_WIDTH / 2
             half_height = height / 2 - self.STROKE_WIDTH / 2
             
-            # Draw the X
             group.add(dwg.line(start=(center_x - half_width, center_y - half_height), 
                                end=(center_x + half_width, center_y + half_height), 
                                stroke=color, stroke_width=self.STROKE_WIDTH))
             group.add(dwg.line(start=(center_x - half_width, center_y + half_height), 
                                end=(center_x + half_width, center_y - half_height), 
                                stroke=color, stroke_width=self.STROKE_WIDTH))
-            
-        if height > 2 or width > 2:
-            # Draw a cross that touches all sides of the rectangle
-            center_x = entity['x']
-            center_y = entity['y']
-            half_width = width / 2 - self.STROKE_WIDTH / 2
-            half_height = height / 2 - self.STROKE_WIDTH / 2
-
-            # Vertical line of the cross
-            group.add(dwg.line(start=(center_x, center_y - half_height),
-                               end=(center_x, center_y + half_height),
-                               stroke=color, stroke_width=self.STROKE_WIDTH))
-
-            # Horizontal line of the cross
-            group.add(dwg.line(start=(center_x - half_width, center_y),
-                               end=(center_x + half_width, center_y),
-                               stroke=color, stroke_width=self.STROKE_WIDTH))
         
         return group
+
+
+    def render_rail(self, dwg, entity):
+        
+        # center point of the entity
+        x = entity.get('x')
+        y = entity.get('y')
+
+        direction = entity.get('direction')
+        width = entity.get('width')
+        group = dwg.g()
+
+        if entity['name'] == 'straight-rail' and entity.get('variant') == "I":
+            length = 2  # unsure why height width data doesn't seem to connect the lines. harcoding for now.
+
+            # Draw a vertical line first
+            half_length = length / 2
+            start = (x, y - half_length)
+            end = (x, y + half_length)
+            
+            line = dwg.line(start=start, end=end, stroke=self.rail_color, stroke_width=self.STROKE_WIDTH)
+            
+            # Create a group for the line
+            rail_group = dwg.g()
+            rail_group.add(line)
+
+            if direction == self.EAST: rail_group.rotate(90, center=(x, y))
+            
+            group.add(rail_group)
+        
+        elif entity['name'] == 'straight-rail' and entity.get('variant') == "/":
+            
+
+            length = width
+            # Draw a vertical line first
+            half_length = length / 2
+            start = (x, y - half_length)
+            end = (x, y + half_length)
+            
+            line = dwg.line(start=start, end=end, stroke=self.rail_color, stroke_width=self.STROKE_WIDTH)
+            
+            # Create a group for the line
+            rail_group = dwg.g()
+            rail_group.add(line)
+            
+            # Rotate the group based on direction
+            if direction == self.NORTH:
+                rail_group.rotate(-45, center=(x, y))
+            if direction == self.SOUTH:
+                rail_group.rotate(-45, center=(x, y))
+
+            # Rotate the group based on direction
+            if direction == self.EAST:
+                rail_group.rotate(45, center=(x, y))
+            if direction == self.WEST:
+                rail_group.rotate(45, center=(x, y))
+
+            # Add the rotated group to the main group
+            group.add(rail_group)
+
+        elif entity['name'] == 'curved-rail':
+
+            # Create two lines for curved rail
+            width, height = entity['width'], entity['height']
+            
+            # Rotate the belt group based on the direction for L-shaped belts
+            if entity.get('variant') == 'L':
+                if direction == self.NORTH:
+                    short_x = x - 2
+                    short_y = y - 3
+                    long_x = x + 1
+                    long_y = y + 4
+
+                elif direction == self.SOUTH:
+                    short_x = x + 2 
+                    short_y = y + 3
+                    long_x = x - 1
+                    long_y = y - 4
+
+                elif direction == self.EAST:
+                    short_x = x + 3
+                    short_y = y - 2
+                    long_x = x - 4
+                    long_y = y + 1
+
+                elif direction == self.WEST:
+                    short_x = x + 4
+                    short_y = y - 1
+                    long_x = x - 3
+                    long_y = y + 2
+
+            
+            # Rotate the belt group based on the direction for R-shaped belts
+            if entity.get('variant') == 'R':
+                if direction == self.NORTH:
+                    short_x = x + 2
+                    short_y = y - 3
+                    long_x = x - 1
+                    long_y = y + 4
+                elif direction == self.SOUTH:
+                    short_x = x - 2
+                    short_y = y + 3
+                    long_x = x + 1
+                    long_y = y - 4
+
+                elif direction == self.EAST:
+                    short_x = x + 3
+                    short_y = y + 2
+                    long_x = x - 4
+                    long_y = y - 1
+
+                elif direction == self.WEST:
+                    short_x = x - 3
+                    short_y = y - 2
+                    long_x = x + 4
+                    long_y = y + 1
+
+
+            # Draw the short line
+            short_line = dwg.line(start=(x, y), end=(short_x, short_y),
+                                stroke=self.rail_color, stroke_width=self.STROKE_WIDTH)
+            group.add(short_line)
+
+            # Draw the long line
+            long_line = dwg.line(start=(x, y), end=(long_x, long_y),
+                                stroke=self.rail_color, stroke_width=self.STROKE_WIDTH)
+            group.add(long_line)
+
+        return group
+
 
     def render_asset(self, dwg, entity):
         group = self.render_default(dwg, entity, color=self.asset_color)        
@@ -85,6 +255,14 @@ class DefaultTheme:
     
     def render_wall(self, dwg, entity):
         group = self.render_default(dwg, entity, color=self.wall_color)        
+        return group
+    
+    def render_spaceship(self, dwg, entity):
+        group = self.render_default(dwg, entity, color=self.spaceship_color)        
+        return group
+
+    def render_electrical(self, dwg, entity):
+        group = self.render_default(dwg, entity, color=self.asset_color)        
         return group
 
     def render_splitter(self, dwg, entity):
@@ -103,40 +281,70 @@ class DefaultTheme:
         
         group = dwg.g()
         group.add(dwg.rect(insert=(x, y), size=(width, height), fill='none', stroke=self.splitter_color, stroke_width=self.STROKE_WIDTH))
-        
-        # Add a single line down the middle of the rectangle
-        if direction == self.EAST:
-            start = (x + width / 2, y)
-            end = (x + width / 2, y + height)
-        else:
-            start = (x, y + height / 2)
-            end = (x + width, y + height / 2)
-        
-        group.add(dwg.line(start=start, end=end, stroke=self.splitter_color, stroke_width=self.STROKE_WIDTH))
-        
+                
         return group
 
     def render_belt(self, dwg, entity):
+        
         x = entity['x'] - entity['width'] / 2
         y = entity['y'] - entity['height'] / 2
         width = entity['width']
         height = entity['height']
+        direction = entity['direction']
+        center = (x + width / 2, y + height / 2)
         
         group = dwg.g()
         
-        if 'direction' in entity:
-            direction = entity['direction']
-            
-            if direction == self.NORTH or direction == self.SOUTH:  # North or South (vertical)
+        
+        if entity.get('variant') == 'I':
+            if direction in [self.NORTH, self.SOUTH]:  # Vertical
                 start = (x + width * 0.5, y)
                 end = (x + width * 0.5, y + height)
-                
-                group.add(dwg.line(start=start, end=end, stroke=self.belt_color, stroke_width=self.STROKE_WIDTH))
-            
-            elif direction == self.EAST or direction == self.WEST:  # East or West (horizontal)
+            elif direction in [self.EAST, self.WEST]:  # Horizontal
                 start = (x, y + height * 0.5)
                 end = (x + width, y + height * 0.5)
-
-                group.add(dwg.line(start=start, end=end, stroke=self.belt_color, stroke_width=self.STROKE_WIDTH))
+            else:
+                return group  # Return empty group for invalid direction
+            
+            group.add(dwg.line(start=start, end=end, stroke=self.belt_color, stroke_width=self.STROKE_WIDTH))
         
+        if entity.get('variant') in ['L', 'R']:
+            
+            belt_group = dwg.g()
+            
+            # Create the L-shaped belt
+            start_v = (x + width * 0.5, y)
+            end_v = (x + width * 0.5, y + height * 0.5)
+            
+            start_h = (x + width * 0.5, y + height * 0.5)
+            end_h = (x + width, y + height * 0.5)
+            
+            # Create a group for the L-shaped belt
+            belt_group.add(dwg.line(start=start_v, end=end_v, stroke=self.belt_color, stroke_width=self.STROKE_WIDTH))
+            belt_group.add(dwg.line(start=start_h, end=end_h, stroke=self.belt_color, stroke_width=self.STROKE_WIDTH))
+
+            # Rotate the belt group based on the direction for L-shaped belts
+            if entity.get('variant') == 'L':
+                if direction == self.NORTH:
+                    belt_group.rotate(270, center)
+                elif direction == self.SOUTH:
+                    belt_group.rotate(90, center)
+                elif direction == self.EAST:
+                    belt_group.rotate(0, center)
+                elif direction == self.WEST:
+                    belt_group.rotate(180, center)
+            
+            # Rotate the belt group based on the direction for R-shaped belts
+            if entity.get('variant') == 'R':
+                if direction == self.NORTH:
+                    belt_group.rotate(0, center)
+                elif direction == self.SOUTH:
+                    belt_group.rotate(180, center)
+                elif direction == self.EAST:
+                    belt_group.rotate(90, center)
+                elif direction == self.WEST:
+                    belt_group.rotate(270, center)
+
+            group.add(belt_group)                
+            
         return group
