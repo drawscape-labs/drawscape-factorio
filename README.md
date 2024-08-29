@@ -42,9 +42,6 @@ Goal being more themes can be implimented that will uniquely render each of the 
 - I've only tested this on a Mac (OSX)
 - For some reason the FUE5-Exporter mod isn't exporting roads. 
 
-## TODO
-- Implement Rendering for the Rail Systems. 
-
 ## Examples
 <table>
   <tr>
@@ -69,3 +66,14 @@ Goal being more themes can be implimented that will uniquely render each of the 
     </td>    
   </tr>
 </table>
+
+
+### Distribution
+
+PyPi API saved in ~/.pypirc for auto-atuh
+
+Increment version number each distribution
+```
+python setup.py sdist bdist_wheel
+twine upload dist/*
+```
