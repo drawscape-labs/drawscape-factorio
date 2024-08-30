@@ -68,12 +68,16 @@ Goal being more themes can be implimented that will uniquely render each of the 
 </table>
 
 
+
+
 ### Distribution
 
 PyPi API saved in ~/.pypirc for auto-atuh
 
 Increment version number each distribution
+
 ```
+rm -rf dist/*
 python setup.py sdist bdist_wheel
 twine upload dist/*
 ```

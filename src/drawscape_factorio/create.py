@@ -1,6 +1,7 @@
 import svgwrite
-from drawscape_factorio.themes.circles_theme import CirclesTheme
-from drawscape_factorio.themes.default_theme import DefaultTheme
+
+from .themes.circles_theme import CirclesTheme
+from .themes.default_theme import DefaultTheme
 
 def create(data, template='default', add_grid=False):
 
@@ -47,10 +48,17 @@ def create(data, template='default', add_grid=False):
     for entity_type, render_method in entity_types.items():
         group = dwg.g(id=entity_type)
         entities = data.get(entity_type, [])
-        for entity in entities:
-            group.add(render_method(dwg, entity))
-        if entities:  # Check if there are any entities for this type
-            dwg.add(group)
+        if entities:
+            # Apply stroke width and color to the group
+            group['stroke'] = theme.get_color(entity_type)
+            group['stroke-width'] = theme.STROKE_WIDTH
+            group['fill'] = 'none'
+            for entity in entities:
+                rendered_element = render_method(dwg, entity)
+                if rendered_element:
+                    group.add(rendered_element)
+            if group.elements:
+                dwg.add(group)
 
     # Get the SVG string
     svg_string = dwg.tostring()
@@ -78,6 +86,7 @@ def create(data, template='default', add_grid=False):
 
 # Function to calculate the bounds of all entities in the data
 def get_entity_bounds(data):
+
     # Flatten all entities into a single list
     all_entities = [entity for category in data.values() for entity in category]
     
