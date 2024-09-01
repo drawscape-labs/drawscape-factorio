@@ -2,20 +2,27 @@
 
 import argparse
 import json
-from .parse import parseFUE5
+from .import_data import importFUE5
 from .create import create
 
 if __name__ == "__main__":
     main()
 
 def main():
+    """
+    Main entry point for the CLI
+    We are just parsing command line arguments and calling the create wrapper with the appropriate arguments.
+    Most of the work for this project is inside of the `create.py` and `themes/parent.py` files.
+    """
+
     parser = argparse.ArgumentParser(description='Drawscape Factorio CLI toolbelt')
     parser.add_argument('action', choices=['import', 'create'], help='Action to perform')
     parser.add_argument('--json', help='Path to the JSON file for import or create action')
     parser.add_argument('--optimize', action='store_true', help='Optimize the SVG output', default=False)
-    parser.add_argument('--template', help='Template to use for create action', default='default')
+    parser.add_argument('--theme', help='Theme to use for create action', default='default')  # Updated from --template to --theme
     parser.add_argument('--output', help='Name of the output file (for create action)')
-    parser.add_argument('--add-grid', action='store_true', help='Add a grid to the SVG (for debugging)', default=False)
+    parser.add_argument('--debug-grid', action='store_true', help='Add a grid to the SVG (for debugging)', default=False)
+    parser.add_argument('--color', help='Color scheme to use for create action', default='main')  # Added color argument
     args = parser.parse_args()
 
     try:
@@ -32,11 +39,12 @@ def main():
             create_args = {
                 'json_file_path': args.json,
                 'optimize': args.optimize,
-                'template': args.template,
-                'add_grid': args.add_grid
+                'add_grid': args.debug_grid  # Updated from 'add_grid' to 'debug_grid'
             }
             if args.output:
                 create_args['output_file_name'] = args.output
+            # Pass theme and color as settings to create function
+            create_args['settings'] = {'theme_name': args.theme, 'color_scheme': args.color, 'add_debug_grid': args.debug_grid}  # Updated from 'template' to 'theme_name', added color_scheme, and 'add_debug_grid'
             createWrapper(**create_args)
     except ValueError as e:
         print(f"Error: {e}")
@@ -55,19 +63,20 @@ def main():
 #   template (str): Template to use for creating the SVG (default: 'default')
 #   output_file_name (str): Name of the output SVG file (default: 'output.svg')
 #   add_grid (bool): Flag to add a grid to the SVG for debugging (default: False)
+#   color_scheme (str): Color scheme to use for create action (default: 'matrix')
 # Returns:
 #   dict: Result containing SVG string and metadata
 
-def createWrapper(json_file_path, optimize=False, template='default', output_file_name='output.svg', add_grid=False):
+def createWrapper(json_file_path, optimize=False, template='default', output_file_name='output.svg', add_grid=False, color_scheme='matrix', settings={}):
     # Load the JSON file
     with open(json_file_path, 'r') as file:
         json_data = json.load(file)
     
     # Parse the JSON data
-    data = parseFUE5(json_data)
+    data = importFUE5(json_data)
     
-    # Call the create function with the parsed data
-    result = create(data, template, add_grid)
+    # Call the create function with the parsed data and settings
+    result = create(data, settings)  # Updated to pass settings object
     
     # Save the SVG file
     with open(output_file_name, 'w') as f:
@@ -78,8 +87,7 @@ def createWrapper(json_file_path, optimize=False, template='default', output_fil
     print(f"  Output file: {output_file_name}")
     print(f"  Size: 100% x 100% (optimized for screen)")
     print(f"  ViewBox: {result['viewbox']['x']} {result['viewbox']['y']} {result['viewbox']['width']} {result['viewbox']['height']}")
-    print(f"  Template: {result['template']}")
-    print(f"  Theme resolution: {result['theme_resolution']}")
+    print(f"  Theme: {result['theme_name']}")  # Updated from 'template' to 'theme_name'
     print(f"  Grid added: {'Yes' if add_grid else 'No'}")
     
     # Print bounding box information

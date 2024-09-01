@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="drawscape-factorio",
-    version="0.15.4",
+    version="0.15.6",
     description="Drawscape Factorio",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
@@ -16,7 +16,6 @@ setup(
     },
     install_requires=[
         'svgwrite',
-        'argparse',
-        'numpy'
+        'argparse'
     ],
 )

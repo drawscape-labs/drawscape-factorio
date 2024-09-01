@@ -1,12 +1,7 @@
-class CirclesTheme:
-    # Constants for directions
-    NORTH = 0
-    EAST = 2
-    SOUTH = 4
-    WEST = 6
+from .parent import ParentTheme
 
-    # Constant for stroke width
-    STROKE_WIDTH = 0.3  # 0.3mm
+class CirclesTheme(ParentTheme):  # Extend ParentTheme
+
 
     def __init__(self):
         self.belt_color = '#FFA500' # Orange

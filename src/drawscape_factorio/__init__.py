@@ -1,4 +1,4 @@
 from .create import create
-from .parse import parseFUE5
+from .import_data import importFUE5
 
-__all__ = ['create', 'parseFUE5']
+__all__ = ['create', 'importFUE5']
