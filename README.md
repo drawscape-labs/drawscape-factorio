@@ -38,7 +38,6 @@ from drawscape_factorio import importFUE5
 ```
 
 You are responsible for parsing the input file and then saving the output as an SVG file. 
-```markdown
 ```python
 # Load the JSON file coming from the FUE5 MOD
 with open('/path/to/exported-entities.json, 'r') as file:
@@ -58,8 +57,6 @@ result = create(data, {
 with open(output_file_name, 'w') as f:
     f.write(result['svg_string'])
 ```
-```
-
 
 ## Exporting Map Data (exported-entities.json)
 Currently using a Factorio MOD called `FUE5-Exporter` to export all entites on a map in JSON format. 
