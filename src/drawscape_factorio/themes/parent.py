@@ -174,6 +174,7 @@ class ParentTheme:
         Calculates the bounds of all entities in the data.
         This is used to set the viewbox for the SVG.
         Looking for max x,y coordinates for all entities.   
+        TODO: have this consider which layers are being shown and only calculate bounds for those layers.
         """
         # If there are no entities, return None
         if not self.LAYERS:
@@ -425,7 +426,7 @@ class ParentTheme:
     def render_pipe(self, dwg, entity):
         return self.render_asset(dwg, entity)
     
-    
+
 
 def create_grid(dwg, viewbox_x, viewbox_y, viewbox_width, viewbox_height):
     """
