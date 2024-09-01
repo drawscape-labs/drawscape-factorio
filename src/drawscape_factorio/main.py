@@ -38,13 +38,13 @@ def main():
                 raise ValueError("--json argument is required for create action")
             create_args = {
                 'json_file_path': args.json,
-                'optimize': args.optimize,
-                'add_grid': args.debug_grid  # Updated from 'add_grid' to 'debug_grid'
             }
             if args.output:
                 create_args['output_file_name'] = args.output
             # Pass theme and color as settings to create function
-            create_args['settings'] = {'theme_name': args.theme, 'color_scheme': args.color, 'add_debug_grid': args.debug_grid}  # Updated from 'template' to 'theme_name', added color_scheme, and 'add_debug_grid'
+            create_args['settings'] = {'theme_name': args.theme, 'color_scheme': args.color}
+            if args.debug_grid:
+                create_args['settings']['add_debug_grid'] = args.debug_grid  # Only add grid if --debug-grid is specified
             createWrapper(**create_args)
     except ValueError as e:
         print(f"Error: {e}")
@@ -67,7 +67,7 @@ def main():
 # Returns:
 #   dict: Result containing SVG string and metadata
 
-def createWrapper(json_file_path, optimize=False, template='default', output_file_name='output.svg', add_grid=False, color_scheme='matrix', settings={}):
+def createWrapper(json_file_path, output_file_name='output.svg', settings={}):
     # Load the JSON file
     with open(json_file_path, 'r') as file:
         json_data = json.load(file)
@@ -88,7 +88,6 @@ def createWrapper(json_file_path, optimize=False, template='default', output_fil
     print(f"  Size: 100% x 100% (optimized for screen)")
     print(f"  ViewBox: {result['viewbox']['x']} {result['viewbox']['y']} {result['viewbox']['width']} {result['viewbox']['height']}")
     print(f"  Theme: {result['theme_name']}")  # Updated from 'template' to 'theme_name'
-    print(f"  Grid added: {'Yes' if add_grid else 'No'}")
     
     # Print bounding box information
     bounds = result['bounds']
@@ -101,7 +100,5 @@ def createWrapper(json_file_path, optimize=False, template='default', output_fil
     print(f"    Height: {bounds['max_y'] - bounds['min_y']:.2f}")
 
     print(f"SVG file saved as {output_file_name}")
-    if optimize:
-        print("Optimization is currently disabled.")
 
     return result
