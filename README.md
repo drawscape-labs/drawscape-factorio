@@ -14,7 +14,7 @@ pip3 install drawscape-factorio
 ```
 
 - Requires python 3.8+
-- I'm developing in a 3.12 environment
+- I'm using with python 3.12 in development and production
 
 ## CLI Usage
 
