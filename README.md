@@ -32,13 +32,13 @@ Additional Params
 ## Code Usage
 
 Include the modules
-```
+```python
 from drawscape_factorio import create as createFactorio
 from drawscape_factorio import importFUE5
 ```
 
 You are responsible for parsing the input file and then saving the output as an SVG file. 
-```
+```python
 # Load the JSON file coming from the FUE5 MOD
 with open('/path/to/exported-entities.json, 'r') as file:
     json_data = json.load(file)
@@ -48,14 +48,15 @@ data = importFUE5(json_data)
 
 # Call the create function with the parsed data and settings
 result = create(data, {
-
+    'theme_name': 'default',
+    'color_scheme': 'main',
+    'show_layers': ['assets', 'belts', 'walls', 'rails', 'electrical', 'spaceship']
 })
 
 # Save the SVG file
 with open(output_file_name, 'w') as f:
     f.write(result['svg_string'])
 ```
-
 
 ## Exporting Map Data (exported-entities.json)
 Currently using a Factorio MOD called `FUE5-Exporter` to export all entites on a map in JSON format. 
