@@ -32,28 +32,27 @@ Additional Params
 Include the modules
 ```
 from drawscape_factorio import create as createFactorio
-from drawscape_factorio import parseFUE5
+from drawscape_factorio import importFUE5
 ```
 
 You are responsible for parsing the input file and then saving the output as an SVG file. 
 ```
 # Load the JSON file coming from the FUE5 MOD
-with open(json_file_path, 'r') as file:
+with open('/path/to/exported-entities.json, 'r') as file:
     json_data = json.load(file)
 
 # Parse the JSON data
 data = importFUE5(json_data)
 
 # Call the create function with the parsed data and settings
-result = create(data, settings)  # Updated to pass settings object
+result = create(data, {
+
+})
 
 # Save the SVG file
 with open(output_file_name, 'w') as f:
     f.write(result['svg_string'])
 ```
-
-
-
 
 
 ## Exporting Map Data (exported-entities.json)
