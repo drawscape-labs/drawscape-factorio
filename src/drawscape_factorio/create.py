@@ -19,6 +19,11 @@ def create(data, settings={}):
     viewbox_width = bounds['max_x'] - bounds['min_x']
     viewbox_height = bounds['max_y'] - bounds['min_y']
 
+    # Check if the color scheme passed in settings is available in the theme
+    color_scheme = settings.get('color_scheme', 'main')
+    if color_scheme not in theme.COLOR_SCHEMES:
+        raise ValueError(f"Color scheme '{color_scheme}' is not available in the theme.")
+
     # Create the SVG drawing object optimized for screen
     dwg = svgwrite.Drawing(
         profile='full',

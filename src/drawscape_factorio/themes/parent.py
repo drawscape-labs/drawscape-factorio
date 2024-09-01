@@ -83,8 +83,6 @@ class ParentTheme:
 
         # Set the settings
         self.settings = {**self.DEFAULT_SETTINGS, **settings}
-        print(self.settings)
-
         self.organize_layers(data)
         self.bounds = self.get_entity_bounds()
 
@@ -135,7 +133,6 @@ class ParentTheme:
 
         # Add the layers
         for layer_name, entities in self.LAYERS.items():
-            print(layer_name)
             if layer_name in self.settings['show_layers']:
                 group = dwg.g(id=layer_name)
                 group['stroke'] = self.get_color(layer_name)
