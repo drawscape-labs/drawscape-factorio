@@ -32,7 +32,7 @@ Additional Params
 ## Code Usage
 
 Include the modules
-```
+```python
 from drawscape_factorio import create as createFactorio
 from drawscape_factorio import importFUE5
 ```
