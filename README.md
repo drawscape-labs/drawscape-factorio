@@ -13,7 +13,8 @@ CLI written in Python to create SVG images from Factorio base data that you can 
 pip3 install drawscape-factorio
 ```
 
-Requires python 3.8+
+- Requires python 3.8+
+- I'm developing in a 3.12 environment
 
 ## CLI Usage
 
