@@ -83,14 +83,27 @@ class ParentTheme:
         }
 
         # Set the settings
-        self.settings = {**self.DEFAULT_SETTINGS, **settings}
-        self.organize_layers(data)
-        self.bounds = self.get_entity_bounds()
+        # Use default settings if user is passing bad settings
+        self.settings = self.DEFAULT_SETTINGS.copy()
+        for key, value in settings.items():
+            if value is not None and value != []:
+                self.settings[key] = value
+
+        if data:
+            self.organize_layers(data)
+            self.bounds = self.get_entity_bounds()
 
     
     def get_color(self, layer_name):
         color_scheme = self.settings['color_scheme']
         return self.COLOR_SCHEMES[color_scheme].get(layer_name, self.COLOR_SCHEMES[color_scheme]['assets'])
+    
+    def list_colors(self):
+        """
+        Returns the COLOR_SCHEMES dictionary.
+        """
+        return self.COLOR_SCHEMES
+
        
     def organize_layers(self, data):
         """
@@ -204,6 +217,15 @@ class ParentTheme:
         Default rendering for all square assets
         Handles rotation based on direction.
         """
+
+        """
+        IMPORTANT: By default we are not rendering "small" assets.
+        This can be overridden in a child themes if desired.
+        But this is a big performance issue when rendering large maps.
+        """
+        if entity.get('height') <= 1 or entity.get('width') <=1:
+            return None
+        
         if entity.get('direction') in [self.EAST, self.WEST]:
             x = entity['x'] - entity['height'] / 2 + self.STROKE_WIDTH / 2
             y = entity['y'] - entity['width'] / 2 + self.STROKE_WIDTH / 2
@@ -217,7 +239,7 @@ class ParentTheme:
             width = entity['width'] - self.STROKE_WIDTH
             height = entity['height'] - self.STROKE_WIDTH
         
-        return dwg.rect(insert=(x, y), size=(width, height))        
+        return dwg.rect(insert=(x, y), size=(width, height))       
 
 
     def render_belt(self, dwg, entity):
