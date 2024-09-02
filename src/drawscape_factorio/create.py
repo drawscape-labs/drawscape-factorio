@@ -1,4 +1,5 @@
 import svgwrite
+import time
 
 from .themes.circles_theme import CirclesTheme
 from .themes.default_theme import DefaultTheme
@@ -7,7 +8,6 @@ def create(data, settings={}):
     
     # Initialize the theme based on the template parameter
     theme_name = settings.get('theme_name', 'default')
-    settings['show_layers'] = ['assets', 'belts', 'walls', 'rails']
 
     if theme_name == 'circles':
         theme = CirclesTheme(data, settings)
@@ -23,7 +23,7 @@ def create(data, settings={}):
     color_scheme = settings.get('color_scheme', 'main')
     if color_scheme not in theme.COLOR_SCHEMES:
         raise ValueError(f"Color scheme '{color_scheme}' is not available in the theme.")
-
+    
     # Create the SVG drawing object optimized for screen
     dwg = svgwrite.Drawing(
         profile='full',
@@ -32,11 +32,9 @@ def create(data, settings={}):
     )
 
     # Do the rendering
-    theme.render(dwg)
-
-    # Get the SVG string
+    theme.render(dwg) 
     svg_string = dwg.tostring()
-
+    
     # Prepare the return dictionary
     result = {
         'svg_string': svg_string,

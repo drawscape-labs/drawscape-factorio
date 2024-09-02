@@ -24,18 +24,7 @@ class ParentTheme:
     WEST = 6
 
     # Constant for stroke width
-    STROKE_WIDTH = 0.3
-
-    # Will be populated by the organize_layers method.
-    LAYERS = {
-        'belts': [],
-        'walls': [],
-        'rails': [],
-        'electrical': [],
-        'spaceship': [],
-        'pipes': [],
-        'assets': []
-    }
+    STROKE_WIDTH = 0.2
 
     # Layers are meant to group like entities to hide/show as desired.
     # Each Layer Definitions is an array of entity names that we can use for fuzzy matching
@@ -80,6 +69,18 @@ class ParentTheme:
         :param data: The entity data to be rendered
         :param settings: User-defined settings to override defaults
         """
+
+        # Will be populated by the organize_layers method.
+        # needs to be reset on init to not compound data from previous runs.
+        self.LAYERS = {
+            'belts': [],
+            'walls': [],
+            'rails': [],
+            'electrical': [],
+            'spaceship': [],
+            'pipes': [],
+            'assets': []
+        }
 
         # Set the settings
         self.settings = {**self.DEFAULT_SETTINGS, **settings}

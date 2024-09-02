@@ -61,5 +61,14 @@ class DefaultTheme(ParentTheme):  # Extend ParentTheme
             'spaceship': '#FFFFFF',  # White
             'rails': '#FFFFFF',  # White
             'electrical': '#FFFFFF'  # White
+        },
+        'flat_blue': {
+            'bg': '#1E3A4C',  # Dark Blue
+            'assets': '#FFA500',  # Orange
+            'belts': '#FFA500',  # Orange
+            'walls': '#FFA500',  # Orange
+            'spaceship': '#FFA500',  # Orange
+            'rails': '#FFA500',  # Orange
+            'electrical': '#FFA500'  # Orange
         }
     }

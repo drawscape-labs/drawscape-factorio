@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="drawscape-factorio",
-    version="0.15.6",
+    version="0.15.7",
     description="Drawscape Factorio",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
