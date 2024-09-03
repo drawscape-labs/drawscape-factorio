@@ -140,7 +140,7 @@ class ParentTheme:
         color_scheme = self.settings['color']
         if self.COLOR_SCHEMES[color_scheme]['bg']:
             background_group = dwg.g(id='background')
-            background_group.add(dwg.rect(insert=(0, 0), size=(self.bounds['max_x'] - self.bounds['min_x'], self.bounds['max_y'] - self.bounds['min_y']), fill=self.COLOR_SCHEMES[color_scheme]['bg']))
+            background_group.add(dwg.rect(insert=(0, 0), size=(self.bounds['max_x'], self.bounds['max_y']), fill=self.COLOR_SCHEMES[color_scheme]['bg']))
             dwg.add(background_group)
 
         if self.settings['add_grid']:

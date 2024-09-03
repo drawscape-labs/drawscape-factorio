@@ -34,8 +34,8 @@ def create(data, settings={}):
 
     # Calculate the viewBox parameters
     bounds = theme.get_entity_bounds()    
-    viewbox_width = bounds['max_x'] - bounds['min_x']
-    viewbox_height = bounds['max_y'] - bounds['min_y']
+    viewbox_width = bounds['max_x']
+    viewbox_height = bounds['max_y']
     
     # Create the SVG drawing object optimized for screen
     dwg = svgwrite.Drawing(
