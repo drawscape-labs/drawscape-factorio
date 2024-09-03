@@ -20,7 +20,6 @@ def listThemes():
             
             for name, obj in inspect.getmembers(module):
                 if inspect.isclass(obj) and issubclass(obj, ParentTheme) and obj != ParentTheme and obj.__module__ == module_name:
-                    print(obj)
                     # Initialize the theme with empty data and empty settings
                     theme = obj({})
                     themes.append({

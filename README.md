@@ -131,6 +131,7 @@ pip3 install -e .
 PyPi API saved in ~/.pypirc for auto-authentication
 
 ```
+python setup.py clean --all
 rm -rf dist/*
 python setup.py sdist bdist_wheel
 twine upload dist/*
