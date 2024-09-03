@@ -1,22 +1,32 @@
 import svgwrite
-import time
 
-from .themes.circles_theme import CirclesTheme
-from .themes.default_highres import DefaultHighResTheme
-from .themes.default import DefaultTheme
+from .theme_helper import loadTheme
 
 def create(data, settings={}):
     
-    # Initialize the theme based on the template parameter
-    theme_name = settings.get('theme_name', 'default') or 'default'
-    color_scheme = settings.get('color_scheme', 'main') or 'main'
+    """
+    Create an SVG image from the given data and settings.
+    
+    data: dict containing entities to render, you can pass an empty dict {}
+    settings: dict containing settings for the theme
+        - theme: The slug of the theme we want to use
+        - color: The name of the color scheme to use.
+        - layers: An array of layer names to show. If nothing set, all layers are shown. ['assets', 'belts', 'walls', 'spaceship', 'rails', 'electrical']
+        - add_grid: Add a grid to the SVG for debugging (default: False)
+    TODO: move all SVGWRITE stuff into parent theme class.
+    """
+    
+    theme_slug = settings.get('theme', 'squares') or 'squares'
+    color_scheme = settings.get('color', 'black') or 'black'
 
-    if theme_name == 'circles':
-        theme = CirclesTheme(data, settings)
-    elif theme_name == 'default_highres':
-        theme = DefaultHighResTheme(data, settings)
-    else:  # default theme
-        theme = DefaultTheme(data, settings)
+    # Load the theme
+    try:
+        ThemeClass = loadTheme(theme_slug)
+        theme = ThemeClass(data, settings)
+    except ValueError as e:
+        print(f"Error: {e}. Falling back to 'squares' theme.")
+        ThemeClass = loadTheme('squares')
+        theme = ThemeClass(data, settings)
 
     # Check if the color scheme passed in settings is available in the theme
     if color_scheme not in theme.COLOR_SCHEMES:
@@ -48,7 +58,7 @@ def create(data, settings={}):
             'width': viewbox_width,
             'height': viewbox_height
         },
-        'theme_name': theme_name,   
+        'theme_name': theme_slug,   
     }
 
     return result

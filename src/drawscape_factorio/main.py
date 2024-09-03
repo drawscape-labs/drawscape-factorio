@@ -4,6 +4,7 @@ import argparse
 import json
 from .import_data import importFUE5
 from .create import create
+from .theme_helper import listThemes
 
 if __name__ == "__main__":
     main()
@@ -16,13 +17,13 @@ def main():
     """
 
     parser = argparse.ArgumentParser(description='Drawscape Factorio CLI toolbelt')
-    parser.add_argument('action', choices=['import', 'create'], help='Action to perform')
+    parser.add_argument('action', choices=['import', 'create', 'themes'], help='Action to perform')
     parser.add_argument('--json', help='Path to the JSON file for import or create action')
     parser.add_argument('--optimize', action='store_true', help='Optimize the SVG output', default=False)
-    parser.add_argument('--theme', help='Theme to use for create action', default='default')  # Updated from --template to --theme
+    parser.add_argument('--theme', help='Theme (slug) to use for create action', default='squares')
+    parser.add_argument('--color', help='Color scheme to use for create action', default='black')
     parser.add_argument('--output', help='Name of the output file (for create action)')
-    parser.add_argument('--debug-grid', action='store_true', help='Add a grid to the SVG (for debugging)', default=False)
-    parser.add_argument('--color', help='Color scheme to use for create action', default='main')  # Added color argument
+    parser.add_argument('--add-grid', action='store_true', help='Add a grid to the SVG (for debugging)', default=False)
     args = parser.parse_args()
 
     try:
@@ -32,7 +33,6 @@ def main():
             with open(args.json, 'r') as file:
                 json_data = json.load(file)
             parsed_data = parseJSON(json_data)
-            print(f"Parsed data: {json.dumps(parsed_data, indent=2)}")
         elif args.action == 'create':
             if not args.json:
                 raise ValueError("--json argument is required for create action")
@@ -41,11 +41,15 @@ def main():
             }
             if args.output:
                 create_args['output_file_name'] = args.output
-            # Pass theme and color as settings to create function
-            create_args['settings'] = {'theme_name': args.theme, 'color_scheme': args.color}
-            if args.debug_grid:
-                create_args['settings']['add_debug_grid'] = args.debug_grid  # Only add grid if --debug-grid is specified
+            create_args['settings'] = {'theme': args.theme, 'color': args.color}
+            if args.add_grid:
+                create_args['settings']['add_grid'] = args.add_grid
+
             createWrapper(**create_args)
+        elif args.action == 'themes':
+            print("Available themes:")
+            for theme in listThemes():
+                print(f"- {theme['slug']} - {theme['name']}")
     except ValueError as e:
         print(f"Error: {e}")
     except TypeError as e:
@@ -59,11 +63,9 @@ def main():
 # Function to handle the creation of SVG from JSON data
 # Parameters:
 #   json_file_path (str): Path to the input JSON file
-#   optimize (bool): Flag to optimize the SVG output (currently disabled)
-#   template (str): Template to use for creating the SVG (default: 'default')
 #   output_file_name (str): Name of the output SVG file (default: 'output.svg')
-#   add_grid (bool): Flag to add a grid to the SVG for debugging (default: False)
-#   color_scheme (str): Color scheme to use for create action (default: 'matrix')
+#   settings (dict): See the create.py for details on the settings object.
+
 # Returns:
 #   dict: Result containing SVG string and metadata
 
@@ -76,7 +78,7 @@ def createWrapper(json_file_path, output_file_name='output.svg', settings={}):
     data = importFUE5(json_data)
     
     # Call the create function with the parsed data and settings
-    result = create(data, settings)  # Updated to pass settings object
+    result = create(data, settings)
     
     # Save the SVG file
     with open(output_file_name, 'w') as f:

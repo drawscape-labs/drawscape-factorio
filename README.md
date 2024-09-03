@@ -114,7 +114,7 @@ Easiest way to get started it to clone the `default_theme.py` and start making y
 
 
 
-### Dev
+### Development
 ```
 conda env update --file environment.yml --prune  
 conda activate drawscape_factorio

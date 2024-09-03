@@ -2,12 +2,11 @@ from .parent import ParentTheme
 
 class CirclesTheme(ParentTheme):  # Extend ParentTheme
 
+    # Constants for theme attributes
+    THEME_NAME = "Circles"
+    THEME_SLUG = "circles"
+    THEME_VERSION = "1.0"
 
-    def __init__(self):
-        self.belt_color = '#FFA500' # Orange
-        self.splitter_color = '#FF0000' # Red
-        self.wall_color = '#808080' # Grey
-        self.asset_color = '#0000FF'  # Blue
 
     def build_belt(self, dwg, entity):
         x = entity['x'] - entity['width'] / 2

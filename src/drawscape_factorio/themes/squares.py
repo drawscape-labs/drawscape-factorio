@@ -1,14 +1,14 @@
 from .parent import ParentTheme
 
-class DefaultHighResTheme(ParentTheme):  # Extend ParentTheme
+class SquaresTheme(ParentTheme):  # Extend ParentTheme
 
     # Constants for theme attributes
-    THEME_NAME = "Default (High Res)"
-    THEME_SLUG = "default_highres"
+    THEME_NAME = "Squares (Low Res)"
+    THEME_SLUG = "squares"
     THEME_VERSION = "1.0"
 
     COLOR_SCHEMES = {
-        'main': {
+        'black': {
             'bg': None,
             'assets': '#000000',  # Black
             'belts': '#000000',  # Black
@@ -17,16 +17,16 @@ class DefaultHighResTheme(ParentTheme):  # Extend ParentTheme
             'rails': '#000000',  # Black
             'electrical': '#000000'  # Black
         },
-        'rainbow': {
-            'bg': '#FF0000',  # Red
-            'assets': '#FFA500',  # Orange
-            'belts': '#FFFF00',  # Yellow
-            'walls': '#008000',  # Green
-            'spaceship': '#0000FF',  # Blue
-            'rails': '#4B0082',  # Navy Blue
-            'electrical': '#EE82EE'  # Violet
+        'algae': {
+            'bg': None,  
+            'assets': '#438ab7',  # Blue
+            'belts': '#9db669',  # Green
+            'walls': '#438ab7',  # Blue
+            'spaceship': '#438ab7',  # Blue
+            'rails': '#000000',  # Black
+            'electrical': '#438ab7'  # Blue
         },
-        'black': {
+        'white': {
             'bg': '#000000',  # Black
             'assets': '#FFFFFF',  # White
             'belts': '#FFFFFF',  # White
@@ -70,26 +70,42 @@ class DefaultHighResTheme(ParentTheme):  # Extend ParentTheme
             'spaceship': '#FFA500',  # Orange
             'rails': '#FFA500',  # Orange
             'electrical': '#FFA500'  # Orange
+        },
+        'rails': {
+            'bg': '#000000',  
+            'assets': '#FFFFFF',
+            'belts': '#FFFFFF', 
+            'walls': '#FFFFFF',
+            'spaceship': '#FFFFFF',
+            'rails': '#00FFFF',
+            'electrical': '#FFFFFF'
+        },
+        'belts': {
+            'bg': '#000000',  
+            'assets': '#FFFFFF',
+            'belts': '#00FFFF', 
+            'walls': '#FFFFFF',
+            'spaceship': '#FFFFFF',
+            'rails': '#FFFFFF',
+            'electrical': '#FFFFFF'
+        },
+        'terracotta': {
+            'bg': '#B85042',  
+            'assets': '#A7BEAE',
+            'belts': '#E7E8D1', 
+            'walls': '#A7BEAE',
+            'spaceship': '#A7BEAE',
+            'rails': '#E7E8D1',
+            'electrical': '#A7BEAE'
+        },
+        'circuit': {
+            'bg': '#2E8B57',  # Sea Green (darker than Medium Sea Green)
+            'assets': '#C0C0C0',
+            'belts': '#B87333', 
+            'walls': '#C0C0C0',
+            'spaceship': '#C0C0C0',
+            'rails': '#000000',
+            'electrical': '#C0C0C0'
         }
+
     }
-
-    def render_asset(self, dwg, entity):
-        """
-        Default rendering for all square assets
-        Handles rotation based on direction.
-        """
-
-        if entity.get('direction') in [self.EAST, self.WEST]:
-            x = entity['x'] - entity['height'] / 2 + self.STROKE_WIDTH / 2
-            y = entity['y'] - entity['width'] / 2 + self.STROKE_WIDTH / 2
-            # handle rotation
-            width = entity['height'] - self.STROKE_WIDTH
-            height = entity['width'] - self.STROKE_WIDTH
-        else:
-            x = entity['x'] - entity['width'] / 2 + self.STROKE_WIDTH / 2
-            y = entity['y'] - entity['height'] / 2 + self.STROKE_WIDTH / 2
-            # no rotation
-            width = entity['width'] - self.STROKE_WIDTH
-            height = entity['height'] - self.STROKE_WIDTH
-        
-        return dwg.rect(insert=(x, y), size=(width, height))      

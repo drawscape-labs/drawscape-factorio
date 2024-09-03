@@ -41,9 +41,9 @@ class ParentTheme:
 
     # Settings
     DEFAULT_SETTINGS = {
-        'color_scheme': 'main',
-        'show_layers': ['assets', 'belts', 'walls', 'rails', 'electrical', 'spaceship'], # what are we showing
-        'add_debug_grid': False
+        'color': 'main',
+        'layers': ['assets', 'belts', 'walls', 'rails', 'electrical', 'spaceship'], # what are we showing
+        'add_grid': False
     }
 
     # Colors should be a background + each key in LAYER_DEFINITION
@@ -95,7 +95,7 @@ class ParentTheme:
 
     
     def get_color(self, layer_name):
-        color_scheme = self.settings['color_scheme']
+        color_scheme = self.settings['color']
         return self.COLOR_SCHEMES[color_scheme].get(layer_name, self.COLOR_SCHEMES[color_scheme]['assets'])
     
     def list_colors(self):
@@ -129,35 +129,38 @@ class ParentTheme:
     
     def render(self, dwg):
         """
-        Iterates through each layer and renders the entities in that layer.
-        Each layer is a group of entities that are the same color and stroke width.
+        Iterates through each layer and renders the entities in that LAYER.
+        Each LAYER is a group of entities that are the same color and stroke width.
+        Inside of each LAYER we have a switch case that determines the rendering for specific entity types.
         This is NOT intended to be overridden by child themes unless advanced logic is needed.
         """
 
         # Add the background to a group with id = 'background'
         # TODO: Will this be pen plotted if there is no stroke? 
-        color_scheme = self.settings['color_scheme']
+        color_scheme = self.settings['color']
         if self.COLOR_SCHEMES[color_scheme]['bg']:
             background_group = dwg.g(id='background')
             background_group.add(dwg.rect(insert=(0, 0), size=(self.bounds['max_x'] - self.bounds['min_x'], self.bounds['max_y'] - self.bounds['min_y']), fill=self.COLOR_SCHEMES[color_scheme]['bg']))
             dwg.add(background_group)
 
-        if self.settings['add_debug_grid']:
+        if self.settings['add_grid']:
             create_grid(dwg, 0, 0, self.bounds['max_x'] - self.bounds['min_x'], self.bounds['max_y'] - self.bounds['min_y'])
 
         # Add the layers
         for layer_name, entities in self.LAYERS.items():
-            if layer_name in self.settings['show_layers']:
+            if layer_name in self.settings['layers']:
                 group = dwg.g(id=layer_name)
                 group['stroke'] = self.get_color(layer_name)
                 group['stroke-width'] = self.STROKE_WIDTH
+                if layer_name == 'rails':
+                    group['stroke-width'] = 0.4
                 group['fill'] = 'none'
                 for entity in entities:
                     
                     # Switch case logic for rendering each entity based on its name
                     # This ensures that we can have unique rendering per entity within a LAYER group.
-                    # Ex: splitters and belts need different renderings, but are the same color and layer.
-                    # TODO: keep adding render_<entity_name> methods as we add more entity types and see what people want to render.
+                    # Example: splitters and belts need different renderings, but are the same color and layer.
+                    # TODO: keep adding render_<entity_name> methods as we add more entity types and see what needs custom rendering logic
                     if any(definition in entity['name'] for definition in ['belt']):
                         rendered_element = self.render_belt(dwg, entity)
                     elif any(definition in entity['name'] for definition in ['gate']):
@@ -454,7 +457,7 @@ def create_grid(dwg, viewbox_x, viewbox_y, viewbox_width, viewbox_height):
     Really just for debugging theme layouts and placement.
     """
 
-    grid_color = svgwrite.rgb(200, 200, 200)  # Light gray color
+    grid_color = "#C8C8C8"  # Light gray color
     grid_stroke_width = 0.05
         
     # Create a group for the grid
