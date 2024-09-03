@@ -1,6 +1,6 @@
 from .squares import SquaresTheme
 
-class SqauresHighResTheme(SquaresTheme):
+class SquaresHighResTheme(SquaresTheme):
 
     # Constants for theme attributes
     THEME_NAME = "Squares (High Res)"
