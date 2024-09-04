@@ -89,6 +89,7 @@ class ParentTheme:
             if value is not None and value != []:
                 self.settings[key] = value
 
+
         if data:
             self.organize_layers(data)
             self.bounds = self.get_entity_bounds()
@@ -193,11 +194,9 @@ class ParentTheme:
         # If there are no entities, return None
         if not self.LAYERS:
             return None
-        
-        # Initialize the bounds with the first entity
-        first_entity = next(iter(self.LAYERS.values()))[0]
-        min_x = max_x = first_entity['x']
-        min_y = max_y = first_entity['y']
+                
+        min_x = max_x = 0
+        min_y = max_y = 0
         
         # Iterate through all entities to find the minimum and maximum x and y coordinates
         for entities in self.LAYERS.values():

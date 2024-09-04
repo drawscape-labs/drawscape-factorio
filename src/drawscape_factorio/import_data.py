@@ -1,6 +1,6 @@
 
 # Do not include these items in the JSON file
-BLACKLIST = ['fish', 'tree', 'ghost', 'cliff', 'biter', 'sand', 'worm', 'rock', 'spitter', 'item-on-ground', 'locomotive', 'wagon']
+BLACKLIST = ['fish', 'salmon', 'tree', 'ghost', 'cliff', 'biter', 'sand', 'worm', 'rock', 'spitter', 'item-on-ground', 'locomotive', 'wagon']
 
 """
 This JSON data is coming from the Factorio FUE5 MOD
