@@ -1,8 +1,13 @@
 import svgwrite
+import psutil
 
 from .theme_helper import loadTheme
 
 def create(data, settings={}):
+
+    process = psutil.Process()
+    memory_usage = process.memory_info().rss  # in bytes
+    print(f"--Memory Module Start: {memory_usage / 1024 ** 2} MB")    
     
     """
     Create an SVG image from the given data and settings.
@@ -61,5 +66,9 @@ def create(data, settings={}):
         },
         'theme_name': theme_slug,   
     }
+
+
+    memory_usage = process.memory_info().rss  # in bytes
+    print(f"---Memory Module END: {memory_usage / 1024 ** 2} MB")    
 
     return result
