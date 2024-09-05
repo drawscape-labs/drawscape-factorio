@@ -52,6 +52,7 @@ def create(data, settings={}):
 
     # Do the rendering
     theme.render(dwg) 
+    theme.cleanup()
     svg_string = dwg.tostring()
     
     # Prepare the return dictionary

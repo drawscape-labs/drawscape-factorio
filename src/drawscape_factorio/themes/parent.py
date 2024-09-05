@@ -1,3 +1,5 @@
+import gc
+
 """
 Parent theme is the base class for all themes.
 This will be extended by child themes added to this theme folder
@@ -94,7 +96,22 @@ class ParentTheme:
             self.organize_layers(data)
             self.bounds = self.get_entity_bounds()
 
-    
+
+    def cleanup(self):
+        """
+        Cleanup the LAYERS dictionary to not compound data from previous runs.
+        """
+        print("Cleaning up")
+        self.LAYERS = {
+            'belts': [],
+            'walls': [],
+            'rails': [],
+            'electrical': [],
+            'spaceship': []
+        }
+        gc.collect()
+
+
     def get_color(self, layer_name):
         color_scheme = self.settings['color']
         return self.COLOR_SCHEMES[color_scheme].get(layer_name, self.COLOR_SCHEMES[color_scheme]['assets'])
