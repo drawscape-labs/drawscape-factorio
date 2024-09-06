@@ -13,6 +13,9 @@ class SquaresHighResTheme(SquaresTheme):
         Handles rotation based on direction.
         """
 
+        if entity.get('height') <= 0 or entity.get('width') <= 0:
+            return None
+
         if entity.get('direction') in [self.EAST, self.WEST]:
             x = entity['x'] - entity['height'] / 2 + self.STROKE_WIDTH / 2
             y = entity['y'] - entity['width'] / 2 + self.STROKE_WIDTH / 2

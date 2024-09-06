@@ -7,7 +7,7 @@ def create(data, settings={}):
 
     process = psutil.Process()
     memory_usage = process.memory_info().rss  # in bytes
-    print(f"--Memory Module Start: {memory_usage / 1024 ** 2} MB")    
+    # print(f"--Memory Module Start: {memory_usage / 1024 ** 2} MB")    
     
     """
     Create an SVG image from the given data and settings.
@@ -16,14 +16,14 @@ def create(data, settings={}):
     settings: dict containing settings for the theme
         - theme: The slug of the theme we want to use
         - color: The name of the color scheme to use.
-        - layers: An array of layer names to show. If nothing set, all layers are shown. ['assets', 'belts', 'walls', 'spaceship', 'rails', 'electrical']
+        - layers: An array of layer names to show. If nothing set, all layers are shown. ['assets', 'belts', 'walls', 'spaceship', 'rails', 'electrical', 'pipes']
         - add_grid: Add a grid to the SVG for debugging (default: False)
     TODO: move all SVGWRITE stuff into parent theme class.
     """
     
     theme_slug = settings.get('theme', 'squares') or 'squares'
     color_scheme = settings.get('color', 'black') or 'black'
-
+    
     # Load the theme
     try:
         ThemeClass = loadTheme(theme_slug)
@@ -70,6 +70,6 @@ def create(data, settings={}):
 
 
     memory_usage = process.memory_info().rss  # in bytes
-    print(f"---Memory Module END: {memory_usage / 1024 ** 2} MB")    
+    # print(f"---Memory Module END: {memory_usage / 1024 ** 2} MB")    
 
     return result

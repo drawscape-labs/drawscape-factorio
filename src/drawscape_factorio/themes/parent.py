@@ -43,8 +43,8 @@ class ParentTheme:
 
     # Settings
     DEFAULT_SETTINGS = {
-        'color': 'main',
-        'layers': ['assets', 'belts', 'walls', 'rails', 'electrical', 'spaceship'], # what are we showing
+        'color': 'black',
+        'layers': ['assets', 'belts', 'walls', 'rails', 'electrical', 'spaceship', 'pipes'],
         'add_grid': False
     }
 
@@ -53,7 +53,7 @@ class ParentTheme:
     # Structure: COLOR_SCHEMES[color_scheme_name] = {layer_name: color_value}
     # When defining colors in a child theme, always include a "main" color scheme as the fallback if nothing is defined.
     COLOR_SCHEMES = {
-        'main': {
+        'black': {
             'bg': None,
             'assets': '#000000',
             'belts': '#000000',
@@ -71,6 +71,8 @@ class ParentTheme:
         :param data: The entity data to be rendered
         :param settings: User-defined settings to override defaults
         """
+
+        print(f"Initializaing Parent Theme: Settings: {settings}")
 
         # Will be populated by the organize_layers method.
         # needs to be reset on init to not compound data from previous runs.
@@ -242,6 +244,10 @@ class ParentTheme:
         This can be overridden in a child themes if desired.
         But this is a big performance issue when rendering large maps.
         """
+        ## what are some assets negative height/wdith?
+        if entity.get('height') <= 0 or entity.get('width') <= 0:
+            return None
+
         if entity.get('height') <= 1 or entity.get('width') <=1:
             return None
         
@@ -262,7 +268,6 @@ class ParentTheme:
 
 
     def render_belt(self, dwg, entity):
-        
         x = entity['x'] - entity['width'] / 2
         y = entity['y'] - entity['height'] / 2
         width = entity['width']
@@ -282,8 +287,7 @@ class ParentTheme:
             
             return dwg.line(start=start, end=end)
         
-        if entity.get('variant') in ['L', 'R']:
-            
+        elif entity.get('variant') in ['L', 'R']:
             belt_group = dwg.g()
             
             # Create the L-shaped belt
@@ -319,9 +323,11 @@ class ParentTheme:
                 elif direction == self.WEST:
                     belt_group.rotate(270, center)
 
-            return belt_group;                
-            
-        return dwg.g()    
+            return belt_group
+        
+        else:
+            # TODO: handle this case  {'name': 'fast-underground-belt', 'x': 4.5, 'y': 383.375, 'direction': 6, 'width': 1, 'height': 1}
+            return None
 
     def render_rail(self, dwg, entity):
         
