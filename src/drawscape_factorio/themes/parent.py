@@ -54,7 +54,7 @@ class ParentTheme:
     # When defining colors in a child theme, always include a "main" color scheme as the fallback if nothing is defined.
     COLOR_SCHEMES = {
         'black': {
-            'bg': None,
+            'bg': "#ffffff",
             'assets': '#000000',
             'belts': '#000000',
             'walls': '#000000',
@@ -77,6 +77,7 @@ class ParentTheme:
         # Will be populated by the organize_layers method.
         # needs to be reset on init to not compound data from previous runs.
         self.LAYERS = {
+            'bg': [],
             'belts': [],
             'walls': [],
             'rails': [],
@@ -158,9 +159,10 @@ class ParentTheme:
         # Add the background to a group with id = 'background'
         # TODO: Will this be pen plotted if there is no stroke? 
         color_scheme = self.settings['color']
+        
         if self.COLOR_SCHEMES[color_scheme]['bg']:
-            background_group = dwg.g(id='background')
-            background_group.add(dwg.rect(insert=(0, 0), size=(self.bounds['max_x'], self.bounds['max_y']), fill=self.COLOR_SCHEMES[color_scheme]['bg']))
+            background_group = dwg.g(id='background', class_='background')
+            background_group.add(dwg.rect(insert=(0, 0), size=(self.bounds['max_x'], self.bounds['max_y']) ))
             dwg.add(background_group)
 
         if self.settings['add_grid']:
@@ -169,12 +171,10 @@ class ParentTheme:
         # Add the layers
         for layer_name, entities in self.LAYERS.items():
             if layer_name in self.settings['layers']:
-                group = dwg.g(id=layer_name)
-                group['stroke'] = self.get_color(layer_name)
+                group = dwg.g(id=layer_name, class_=layer_name)
                 group['stroke-width'] = self.STROKE_WIDTH
                 if layer_name == 'rails':
                     group['stroke-width'] = 0.4
-                group['fill'] = 'none'
                 for entity in entities:
                     
                     # Switch case logic for rendering each entity based on its name
@@ -201,6 +201,30 @@ class ParentTheme:
                         group.add(rendered_element)
                 if group.elements:
                     dwg.add(group)
+        return None
+    
+    def render_styles(self, dwg):
+        """
+        Render the styles for the SVG.
+        This is where we can add more advanced styling per theme if needed.
+        """
+        
+        # Generate CSS styles for each layer
+        css_styles = []
+        for layer_name in self.LAYERS.keys():
+            color = self.get_color(layer_name)
+            if color:
+                print(f"Layer: {layer_name} Color: {color}")
+                css_styles.append(f".{layer_name} {{ stroke: {color}; fill: none; }}")
+                    
+        css_styles.append(f".background rect {{ fill: {self.get_color('bg')}; stroke: {self.get_color('bg')} }}")        
+        # Join all CSS styles
+        css = ' '.join(css_styles)
+        print(css)
+        
+        # Add internal CSS to the SVG (within a <style> block)
+        dwg.defs.add(dwg.style(css))
+        
         return None
 
     def get_entity_bounds(self):

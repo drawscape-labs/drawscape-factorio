@@ -9,22 +9,24 @@ class SquaresTheme(ParentTheme):  # Extend ParentTheme
 
     COLOR_SCHEMES = {
         'black': {
-            'bg': None,
+            'bg': '#ffffff',
             'assets': '#000000',  # Black
             'belts': '#000000',  # Black
             'walls': '#000000',  # Black
             'spaceship': '#000000',  # Black
             'rails': '#000000',  # Black
-            'electrical': '#000000'  # Black
+            'electrical': '#000000', 
+            'pipes': '#000000'
         },
         'algae': {
-            'bg': None,  
+            'bg': '#ffffff',  
             'assets': '#438ab7',  # Blue
             'belts': '#9db669',  # Green
             'walls': '#438ab7',  # Blue
             'spaceship': '#438ab7',  # Blue
             'rails': '#000000',  # Black
-            'electrical': '#438ab7'  # Blue
+            'electrical': '#438ab7',  # Blue
+            'pipes': '#438ab7'
         },
         'white': {
             'bg': '#000000',  # Black
@@ -33,7 +35,8 @@ class SquaresTheme(ParentTheme):  # Extend ParentTheme
             'walls': '#FFFFFF',  # White
             'spaceship': '#FFFFFF',  # White
             'rails': '#FFFFFF',  # White
-            'electrical': '#FFFFFF'  # White
+            'electrical': '#FFFFFF',
+            'pipes': '#FFFFFF'
         },
         'matrix': {
             'bg': '#000000',  # Black
@@ -42,7 +45,8 @@ class SquaresTheme(ParentTheme):  # Extend ParentTheme
             'walls': '#00FF40',  # Slightly lighter Lime Green
             'spaceship': '#00FF60',  # Lighter Lime Green
             'rails': '#00FF80',  # Lighter Lime Green
-            'electrical': '#00FFA0'  # Lightest Lime Green
+            'electrical': '#00FFA0',  # Lightest Lime Green
+            'pipes': '#00FFC0'  # Lightest Lime Green
         },
         'easter': {
             'bg': '#FFFFFF',  # White
@@ -51,7 +55,8 @@ class SquaresTheme(ParentTheme):  # Extend ParentTheme
             'walls': '#008080',  # Teal
             'spaceship': '#00FF00',  # Lime Green
             'rails': '#FFA07A',  # Light Coral
-            'electrical': '#FF00FF'  # Magenta
+            'electrical': '#FF00FF',  # Magenta
+            'pipes': '#FF00FF'  # Magenta
         },
         'blueprint': {
             'bg': '#007ACC',  # Blue background
@@ -60,7 +65,8 @@ class SquaresTheme(ParentTheme):  # Extend ParentTheme
             'walls': '#FFFFFF',  # White
             'spaceship': '#FFFFFF',  # White
             'rails': '#FFFFFF',  # White
-            'electrical': '#FFFFFF'  # White
+            'electrical': '#FFFFFF',  # White
+            'pipes': '#FFFFFF'  # White
         },
         'flat_blue': {
             'bg': '#1E3A4C',  # Dark Blue
@@ -69,7 +75,8 @@ class SquaresTheme(ParentTheme):  # Extend ParentTheme
             'walls': '#FFA500',  # Orange
             'spaceship': '#FFA500',  # Orange
             'rails': '#FFA500',  # Orange
-            'electrical': '#FFA500'  # Orange
+            'electrical': '#FFA500',  # Orange
+            'pipes': '#FFA500'  # Orange
         },
         'rails': {
             'bg': '#000000',  
@@ -78,7 +85,8 @@ class SquaresTheme(ParentTheme):  # Extend ParentTheme
             'walls': '#FFFFFF',
             'spaceship': '#FFFFFF',
             'rails': '#00FFFF',
-            'electrical': '#FFFFFF'
+            'electrical': '#FFFFFF',
+            'pipes': '#FFFFFF'
         },
         'belts': {
             'bg': '#000000',  
@@ -87,7 +95,8 @@ class SquaresTheme(ParentTheme):  # Extend ParentTheme
             'walls': '#FFFFFF',
             'spaceship': '#FFFFFF',
             'rails': '#FFFFFF',
-            'electrical': '#FFFFFF'
+            'electrical': '#FFFFFF',
+            'pipes': '#FFFFFF'
         },
         'terracotta': {
             'bg': '#B85042',  
@@ -96,16 +105,18 @@ class SquaresTheme(ParentTheme):  # Extend ParentTheme
             'walls': '#A7BEAE',
             'spaceship': '#A7BEAE',
             'rails': '#E7E8D1',
-            'electrical': '#A7BEAE'
+            'electrical': '#A7BEAE',
+            'pipes': '#A7BEAE'
         },
         'circuit': {
-            'bg': '#2E8B57',  # Sea Green (darker than Medium Sea Green)
+            'bg': '#2E8B57',
             'assets': '#C0C0C0',
             'belts': '#B87333', 
             'walls': '#C0C0C0',
             'spaceship': '#C0C0C0',
             'rails': '#000000',
-            'electrical': '#C0C0C0'
+            'electrical': '#C0C0C0',
+            'pipes': '#C0C0C0'
         }
 
     }

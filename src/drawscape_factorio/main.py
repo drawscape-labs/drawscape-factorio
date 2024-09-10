@@ -88,6 +88,7 @@ def createWrapper(json_file_path, output_file_name='output.svg', settings={}):
     print(f"Created SVG drawing:")
     print(f"  Output file: {output_file_name}")
     print(f"  Size: 100% x 100% (optimized for screen)")
+    print(f"  Size: {result['size_mb']:.2f} MB")
     print(f"  ViewBox: {result['viewbox']['x']} {result['viewbox']['y']} {result['viewbox']['width']} {result['viewbox']['height']}")
     print(f"  Theme: {result['theme_name']}")  # Updated from 'template' to 'theme_name'
     
