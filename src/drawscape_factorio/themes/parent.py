@@ -43,7 +43,7 @@ class ParentTheme:
 
     # Settings
     DEFAULT_SETTINGS = {
-        'color': 'black',
+        'color_scheme': 'black',
         'layers': ['assets', 'belts', 'walls', 'rails', 'electrical', 'spaceship', 'pipes'],
         'add_grid': False
     }
@@ -54,7 +54,7 @@ class ParentTheme:
     # When defining colors in a child theme, always include a "main" color scheme as the fallback if nothing is defined.
     COLOR_SCHEMES = {
         'black': {
-            'bg': "#ffffff",
+            'background': "#ffffff",
             'assets': '#000000',
             'belts': '#000000',
             'walls': '#000000',
@@ -77,7 +77,7 @@ class ParentTheme:
         # Will be populated by the organize_layers method.
         # needs to be reset on init to not compound data from previous runs.
         self.LAYERS = {
-            'bg': [],
+            'background': [],
             'belts': [],
             'walls': [],
             'rails': [],
@@ -94,6 +94,14 @@ class ParentTheme:
             if value is not None and value != []:
                 self.settings[key] = value
 
+        self.colors = self.COLOR_SCHEMES[self.settings['color_scheme']].copy()
+        # Update colors based on settings['colors'] if it exists
+        if 'colors' in self.settings and isinstance(self.settings['colors'], dict):
+            for layer, color in self.settings['colors'].items():
+                if layer in self.colors:
+                    self.colors[layer] = color
+
+        print(f"Colors: {self.colors}")
 
         if data:
             self.organize_layers(data)
@@ -104,7 +112,6 @@ class ParentTheme:
         """
         Cleanup the LAYERS dictionary to not compound data from previous runs.
         """
-        print("Cleaning up")
         self.LAYERS = {
             'belts': [],
             'walls': [],
@@ -116,8 +123,7 @@ class ParentTheme:
 
 
     def get_color(self, layer_name):
-        color_scheme = self.settings['color']
-        return self.COLOR_SCHEMES[color_scheme].get(layer_name, self.COLOR_SCHEMES[color_scheme]['assets'])
+        return self.colors.get(layer_name, self.colors['assets'])
     
     def list_colors(self):
         """
@@ -158,9 +164,9 @@ class ParentTheme:
 
         # Add the background to a group with id = 'background'
         # TODO: Will this be pen plotted if there is no stroke? 
-        color_scheme = self.settings['color']
+        color_scheme = self.settings['color_scheme']
         
-        if self.COLOR_SCHEMES[color_scheme]['bg']:
+        if self.COLOR_SCHEMES[color_scheme]['background']:
             background_group = dwg.g(id='background', class_='background')
             background_group.add(dwg.rect(insert=(0, 0), size=(self.bounds['max_x'], self.bounds['max_y']) ))
             dwg.add(background_group)
@@ -214,13 +220,11 @@ class ParentTheme:
         for layer_name in self.LAYERS.keys():
             color = self.get_color(layer_name)
             if color:
-                print(f"Layer: {layer_name} Color: {color}")
-                css_styles.append(f".{layer_name} {{ stroke: {color}; fill: none; }}")
+                css_styles.append(f".{layer_name} {{ stroke: {color}; fill: {color}; }}")
                     
-        css_styles.append(f".background rect {{ fill: {self.get_color('bg')}; stroke: {self.get_color('bg')} }}")        
+        css_styles.append(f".background rect {{ fill: {self.get_color('background')}; stroke: {self.get_color('background')} }}")        
         # Join all CSS styles
         css = ' '.join(css_styles)
-        print(css)
         
         # Add internal CSS to the SVG (within a <style> block)
         dwg.defs.add(dwg.style(css))

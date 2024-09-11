@@ -46,11 +46,15 @@ with open('/path/to/exported-entities.json, 'r') as file:
 # Parse the JSON data
 data = importFUE5(json_data)
 
-# Call the create function with the parsed data and settings
+## Basic 
+result = create(data)
+
+# Basic With Settings
 result = create(data, {
     'theme_name': 'default',
-    'color_scheme': 'main',
-    'show_layers': ['assets', 'belts', 'walls', 'rails', 'electrical', 'spaceship']
+    'color_scheme': 'black',
+    'show_layers': ['assets', 'belts', 'walls', 'rails', 'electrical', 'spaceship'], 
+    'colors': { 'bg': '#000000', 'assets': '#ffffff' }
 })
 
 # Save the SVG file

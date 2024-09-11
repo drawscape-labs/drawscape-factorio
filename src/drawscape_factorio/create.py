@@ -2,7 +2,6 @@ import svgwrite
 import subprocess
 import tempfile
 import os
-import time
 
 
 from .theme_helper import loadTheme
@@ -15,14 +14,15 @@ def create(data, settings={}):
     data: dict containing entities to render, you can pass an empty dict {}
     settings: dict containing settings for the theme
         - theme: The slug of the theme we want to use
-        - color: The name of the color scheme to use.
+        - color_scheme: The name of the color scheme to use.
         - layers: An array of layer names to show. If nothing set, all layers are shown. ['assets', 'belts', 'walls', 'spaceship', 'rails', 'electrical', 'pipes']
+        - colors: a key/value pair for custom colors to override/compliment a color scheme. EX: {'bg': '#000000', 'assets': '#FFFFFF' }
         - add_grid: Add a grid to the SVG for debugging (default: False)
     TODO: move all SVGWRITE stuff into parent theme class.
     """
     
     theme_slug = settings.get('theme', 'squares') or 'squares'
-    color_scheme = settings.get('color', 'black') or 'black'
+    color_scheme = settings.get('color_scheme', 'black') or 'black'
     
     # Load the theme
     try:
