@@ -72,7 +72,7 @@ class ParentTheme:
         :param settings: User-defined settings to override defaults
         """
 
-        print(f"Initializaing Parent Theme: Settings: {settings}")
+        # print(f"Initializaing Parent Theme: Settings: {settings}")
 
         # Will be populated by the organize_layers method.
         # needs to be reset on init to not compound data from previous runs.
@@ -100,8 +100,6 @@ class ParentTheme:
             for layer, color in self.settings['colors'].items():
                 if layer in self.colors:
                     self.colors[layer] = color
-
-        print(f"Colors: {self.colors}")
 
         if data:
             self.organize_layers(data)
@@ -292,12 +290,12 @@ class ParentTheme:
             width = entity['width'] - self.STROKE_WIDTH
             height = entity['height'] - self.STROKE_WIDTH
 
-        rounded_x = round(entity['x'], 1) if len(str(entity['x']).split('.')[-1]) > 1 else entity['x']
-        rounded_y = round(entity['y'], 1) if len(str(entity['y']).split('.')[-1]) > 1 else entity['y']
-        rounded_width = round(entity['width'], 1) if len(str(entity['width']).split('.')[-1]) > 1 else entity['width']
-        rounded_height = round(entity['height'], 1) if len(str(entity['height']).split('.')[-1]) > 1 else entity['height']
+        x = round(x, 1)
+        y = round(y, 1)
+        width = round(width, 1)
+        height = round(height, 1)
 
-        return dwg.rect(insert=(rounded_x, rounded_y), size=(rounded_width, rounded_height))       
+        return dwg.rect(insert=(x, y), size=(width, height))       
 
 
     def render_belt(self, dwg, entity):

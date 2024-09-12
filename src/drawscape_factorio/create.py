@@ -72,9 +72,11 @@ def create(data, settings={}):
             'width': viewbox_width,
             'height': viewbox_height
         },
-        'theme_name': theme_slug,   
+        'theme_name': theme_slug,
+        'color_scheme': color_scheme
     }
 
+    print(f"Result: {result['theme_name']} {result['color_scheme']}")
     return result
 
 
