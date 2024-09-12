@@ -278,7 +278,7 @@ class ParentTheme:
 
         if entity.get('height') <= 1 or entity.get('width') <=1:
             return None
-        
+                
         if entity.get('direction') in [self.EAST, self.WEST]:
             x = entity['x'] - entity['height'] / 2 + self.STROKE_WIDTH / 2
             y = entity['y'] - entity['width'] / 2 + self.STROKE_WIDTH / 2
@@ -291,8 +291,13 @@ class ParentTheme:
             # no rotation
             width = entity['width'] - self.STROKE_WIDTH
             height = entity['height'] - self.STROKE_WIDTH
-        
-        return dwg.rect(insert=(x, y), size=(width, height))       
+
+        rounded_x = round(entity['x'], 1) if len(str(entity['x']).split('.')[-1]) > 1 else entity['x']
+        rounded_y = round(entity['y'], 1) if len(str(entity['y']).split('.')[-1]) > 1 else entity['y']
+        rounded_width = round(entity['width'], 1) if len(str(entity['width']).split('.')[-1]) > 1 else entity['width']
+        rounded_height = round(entity['height'], 1) if len(str(entity['height']).split('.')[-1]) > 1 else entity['height']
+
+        return dwg.rect(insert=(rounded_x, rounded_y), size=(rounded_width, rounded_height))       
 
 
     def render_belt(self, dwg, entity):
@@ -318,38 +323,61 @@ class ParentTheme:
         elif entity.get('variant') in ['L', 'R']:
             belt_group = dwg.g()
             
-            # Create the L-shaped belt
-            start_v = (x + width * 0.5, y)
-            end_v = (x + width * 0.5, y + height * 0.5)
-            
-            start_h = (x + width * 0.5, y + height * 0.5)
-            end_h = (x + width, y + height * 0.5)
-            
-            # Create a group for the L-shaped belt
-            belt_group.add(dwg.line(start=start_v, end=end_v))
-            belt_group.add(dwg.line(start=start_h, end=end_h))
+            # Variation 1: L-shape facing top right (EAST)
+            start_v1 = (x + width * 0.5, y)
+            end_v1 = (x + width * 0.5, y + height * 0.5)
+            start_h1 = (x + width * 0.5, y + height * 0.5)
+            end_h1 = (x + width, y + height * 0.5)
 
-            # Rotate the belt group based on the direction for L-shaped belts
-            if entity.get('variant') == 'L':
-                if direction == self.NORTH:
-                    belt_group.rotate(270, center)
-                elif direction == self.SOUTH:
-                    belt_group.rotate(90, center)
-                elif direction == self.EAST:
-                    belt_group.rotate(0, center)
-                elif direction == self.WEST:
-                    belt_group.rotate(180, center)
-            
-            # Rotate the belt group based on the direction for R-shaped belts
-            if entity.get('variant') == 'R':
-                if direction == self.NORTH:
-                    belt_group.rotate(0, center)
-                elif direction == self.SOUTH:
-                    belt_group.rotate(180, center)
-                elif direction == self.EAST:
-                    belt_group.rotate(90, center)
-                elif direction == self.WEST:
-                    belt_group.rotate(270, center)
+            # Variation 2: L-shape facing bottom right (SOUTH)
+            start_v2 = (x + width * 0.5, y + height * 0.5)
+            end_v2 = (x + width * 0.5, y + height)
+            start_h2 = (x + width * 0.5, y + height * 0.5)
+            end_h2 = (x + width, y + height * 0.5)
+
+            # Variation 3: L-shape facing bottom left (WEST)
+            start_v3 = (x + width * 0.5, y + height)
+            end_v3 = (x + width * 0.5, y + height * 0.5)
+            start_h3 = (x, y + height * 0.5)
+            end_h3 = (x + width * 0.5, y + height * 0.5)
+
+            # Variation 4: L-shape facing top left (NORTH)
+            start_v4 = (x + width * 0.5, y)
+            end_v4 = (x + width * 0.5, y + height * 0.5)
+            start_h4 = (x, y + height * 0.5)
+            end_h4 = (x + width * 0.5, y + height * 0.5)
+
+            top_right_v = dwg.line(start=start_v1, end=end_v1)
+            top_right_h = dwg.line(start=start_h1, end=end_h1)
+
+            bottom_right_v = dwg.line(start=start_v2, end=end_v2)
+            bottom_right_h = dwg.line(start=start_h2, end=end_h2)
+
+            bottom_left_v = dwg.line(start=start_v3, end=end_v3)
+            bottom_left_h = dwg.line(start=start_h3, end=end_h3)
+
+            top_left_v = dwg.line(start=start_v4, end=end_v4)
+            top_left_h = dwg.line(start=start_h4, end=end_h4)
+
+            # top right
+            if (entity.get('variant') == 'L' and direction == self.EAST) or (entity.get('variant') == 'R' and direction == self.NORTH):
+                belt_group.add(top_right_v)
+                belt_group.add(top_right_h)
+
+            # bottom right
+            if (entity.get('variant') == 'L' and direction == self.SOUTH) or (entity.get('variant') == 'R' and direction == self.EAST):
+                belt_group.add(bottom_right_v)
+                belt_group.add(bottom_right_h)
+
+            # # bottom left
+            if (entity.get('variant') == 'L' and direction == self.WEST) or (entity.get('variant') == 'R' and direction == self.SOUTH):
+                belt_group.add(bottom_left_v)
+                belt_group.add(bottom_left_h)
+
+            # # top left
+            if (entity.get('variant') == 'L' and direction == self.NORTH) or (entity.get('variant') == 'R' and direction == self.WEST):
+                belt_group.add(top_left_v)
+                belt_group.add(top_left_h)
 
             return belt_group
         
@@ -360,63 +388,52 @@ class ParentTheme:
     def render_rail(self, dwg, entity):
         
         # center point of the entity
-        x = entity.get('x')
-        y = entity.get('y')
+        x = round(entity.get('x'), 1)
+        y = round(entity.get('y'), 1)
 
         direction = entity.get('direction')
-        width = entity.get('width')
-        group = dwg.g()
+        width = round(entity.get('width'), 1)
+        height = round(entity.get('height'), 1)
 
         if entity['name'] == 'straight-rail' and entity.get('variant') == "I":
-            length = 2  # unsure why height width data doesn't seem to connect the lines. harcoding for now.
 
-            # Draw a vertical line first
+            length = 2  # unsure why height width data doesn't seem to connect the lines. harcoding for now.            
             half_length = length / 2
-            start = (x, y - half_length)
-            end = (x, y + half_length)
-            
-            line = dwg.line(start=start, end=end)
-            
-            # Create a group for the line
-            rail_group = dwg.g()
-            rail_group.add(line)
+            start = 0
+            end = 0
 
-            if direction == self.EAST: rail_group.rotate(90, center=(x, y))
+            # Horizontal Line
+            if direction == self.EAST:
+                start = (x - half_length, y)
+                end = (x + half_length, y)
+            # vertical
+            else:                
+                start = (x, y - half_length)
+                end = (x, y + half_length)
             
-            group.add(rail_group)
+            return dwg.line(start=start, end=end)
         
         elif entity['name'] == 'straight-rail' and entity.get('variant') == "/":
-            
 
-            length = width
-            # Draw a vertical line first
-            half_length = length / 2
-            start = (x, y - half_length)
-            end = (x, y + half_length)
-            
-            line = dwg.line(start=start, end=end)
-            
-            # Create a group for the line
-            rail_group = dwg.g()
-            rail_group.add(line)
-            
-            # Rotate the group based on direction
-            if direction == self.NORTH:
-                rail_group.rotate(-45, center=(x, y))
-            if direction == self.SOUTH:
-                rail_group.rotate(-45, center=(x, y))
+            length = 1 ## hard coding for now???
+            line = None
 
-            # Rotate the group based on direction
-            if direction == self.EAST:
-                rail_group.rotate(45, center=(x, y))
-            if direction == self.WEST:
-                rail_group.rotate(45, center=(x, y))
+            # Draw a diagonal line
+            if direction == self.NORTH or direction == self.SOUTH:
+                diagonal_start = (x - length / 2, y - length / 2)
+                diagonal_end = (x + length / 2, y + length / 2)
+                line = dwg.line(start=diagonal_start, end=diagonal_end)
+            else:
+                diagonal_start = (x - length / 2, y + length / 2)
+                diagonal_end = (x + length / 2, y - length / 2)
+                line =  dwg.line(start=diagonal_start, end=diagonal_end)
 
-            # Add the rotated group to the main group
-            group.add(rail_group)
+            return line
 
         elif entity['name'] == 'curved-rail':
 
+            
+            group = dwg.g()
             # Create two lines for curved rail
             width, height = entity['width'], entity['height']
             
@@ -480,8 +497,9 @@ class ParentTheme:
             # Draw the long line
             long_line = dwg.line(start=(x, y), end=(long_x, long_y))
             group.add(long_line)
+            return group
 
-        return group
+        return None
 
 
     def render_gate(self, dwg, entity):
