@@ -54,7 +54,7 @@ result = create(data, {
     'theme_name': 'default',
     'color_scheme': 'black',
     'show_layers': ['assets', 'belts', 'walls', 'rails', 'electrical', 'spaceship'], 
-    'colors': { 'bg': '#000000', 'assets': '#ffffff' }
+    'colors': { 'background': '#000000', 'assets': '#ffffff' }
 })
 
 # Save the SVG file
